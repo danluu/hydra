@@ -1,0 +1,37 @@
+%------------------------------------------------------------------------------
+%           Collection of Circuit Diagrams in MetaPost
+%                         John O'Donnell
+%------------------------------------------------------------------------------
+
+\documentclass{book}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphics}
+\DeclareGraphicsExtensions{.mps}
+\usepackage{hyperref}
+
+\title{Collection of Circuit Diagrams in MetaPost}
+\author{John O'Donnell}
+
+\begin{document}
+\maketitle
+
+\newcommand{\showfig}[1]{%
+  \hrule
+  \begin{center}
+  \includegraphics{figure#1.mps}
+  \end{center}
+  \hrule
+  {Figure.#1}}
+
+\showfig{1}
+\showfig{2}
+\showfig{3}
+\showfig{4}
+\showfig{5}
+\showfig{6}
+\showfig{7}
+\showfig{8}
+\showfig{9}
+
+\end{document}

@@ -1,0 +1,1 @@
+ghci -fglasgow-exts -ddump-splices -package haskell-src -i$HYDRA/tools/general:$HYDRA/tools/netlist:$HYDRA/tools/pattern:$HYDRA/tools/signal:$HYDRA/tools/textio:$HYDRA/circuits/bit:$HYDRA/circuits/word4:$HYDRA/circuits/word:$HYDRA/doc/tutorials:$HYDRA/doc/examples/basic:$HYDRA/doc/examples/netlist:$HYDRA/doc/examples/archM1

@@ -1,0 +1,76 @@
+Compiling CircTest3_Lbl    ( /home/jtod/Hydra/develop/doc/examples/netlist/CircTest3_Lbl.hs, interpreted )
+~~~~~~~~~~~~~~~~~~~~~
+Transforming a Module
+~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------------------------------
+*** Transforming declaration: Proto demux1
+TForall ["a'0"] [Tapp (Tcon (TconName "Signal:Signal")) (Tvar "a'0")] (Tapp (Tapp (Tcon Arrow) (Tvar "a'0")) (Tapp (Tapp (Tcon Arrow) (Tvar "a'0")) (Tapp (Tapp (Tcon (Tuple 2)) (Tvar "a'0")) (Tvar "a'0"))))
+---------------------------------------------------------------------------
+*** Transforming declaration: Fun demux1
+InPort patterns:
+   1. Pvar "c'1"
+   2. Pvar "x'2"
+Output expression:
+   Tup [Var "p'4",Var "q'3"]
+Left hand sides of the equations:
+   0. Pvar "p'4"
+   1. Pvar "q'3"
+Right hand sides of the equations:
+   0. App (App (Var "Signal:and2") (App (Var "Signal:inv") (Var "c'1"))) (Var "x'2")
+   1. App (App (Var "Signal:and2") (Var "c'1")) (Var "x'2")
+Renamings for inputs:
+   0. ("x'2",InportArg 1 (CluVar "x'2"),"x'2'7","x'2'8")
+   1. ("c'1",InportArg 0 (CluVar "c'1"),"c'1'5","c'1'6")
+Renamings for local definitions:
+   0. ("q'3",Equation 1 (CluVar "q'3"),"q'3'11","q'3'12")
+   1. ("p'4",Equation 0 (CluVar "p'4"),"p'4'9","p'4'10")
+Renamings for outputs:
+   0. ("q'3",Outport (CluTup 2 1 (CluVar "q'3")),"q'3'14","q'3'14")
+   1. ("p'4",Outport (CluTup 2 0 (CluVar "p'4")),"p'4'13","p'4'13")
+Renamed InPort patterns:
+   1. Pvar "c'1'5"
+   2. Pvar "x'2'7"
+Renamed left hand sides:
+   0. Pvar "p'4'9"
+   1. Pvar "q'3'11"
+Renamed output expression:
+   Tup [Var "p'4'10",Var "q'3'12"]
+Renamed right hand sides:
+   0. App (App (Var "Signal:and2") (App (Var "Signal:inv") (Var "c'1'6"))) (Var "x'2'8")
+   1. App (App (Var "Signal:and2") (Var "c'1'6")) (Var "x'2'8")
+Renamed equations
+   0. Val (Pvar "p'4'9") (Normal (App (App (Var "Signal:and2") (App (Var "Signal:inv") (Var "c'1'6"))) (Var "x'2'8"))) []
+   1. Val (Pvar "q'3'11") (Normal (App (App (Var "Signal:and2") (Var "c'1'6")) (Var "x'2'8"))) []
+bbody = App (App (App (App (Var "Transform:mkbox") (ListExp [Lit (Char 'd'),Lit (Char 'e'),Lit (Char 'm'),Lit (Char 'u'),Lit (Char 'x'),Lit (Char '1')])) (ListExp [Var "c'1'6",Var "x'2'8"])) (ListExp [Var "p'4'10",Var "q'3'12"])) (ListExp [Var "p'4'10",Var "q'3'12"])
+Final transformed specification
+Equations
+   1. Val (Pvar "p'4'9") (Normal (App (App (Var "Signal:and2") (App (Var "Signal:inv") (Var "c'1'6"))) (Var "x'2'8"))) []
+   2. Val (Pvar "q'3'11") (Normal (App (App (Var "Signal:and2") (Var "c'1'6")) (Var "x'2'8"))) []
+   3. Val (Pvar "p'4'10") (Normal (App (App (App (App (Var "alias") (Var "p'4'9")) (Lit (String "p'4'9"))) (Var "box")) (App (App (Con "Equation") (Lit (Integer 0))) (App (Con "CluVar") (Lit (String "p'4")))))) []
+   4. Val (Pvar "q'3'12") (Normal (App (App (App (App (Var "alias") (Var "q'3'11")) (Lit (String "q'3'11"))) (Var "box")) (App (App (Con "Equation") (Lit (Integer 1))) (App (Con "CluVar") (Lit (String "q'3")))))) []
+   5. Val (Pvar "c'1'6") (Normal (App (App (App (App (Var "alias") (Var "c'1'5")) (Lit (String "c'1'5"))) (Var "box")) (App (App (Con "InportArg") (Lit (Integer 0))) (App (Con "CluVar") (Lit (String "c'1")))))) []
+   6. Val (Pvar "x'2'8") (Normal (App (App (App (App (Var "alias") (Var "x'2'7")) (Lit (String "x'2'7"))) (Var "box")) (App (App (Con "InportArg") (Lit (Integer 1))) (App (Con "CluVar") (Lit (String "x'2")))))) []
+   7. Val (Pvar "box") (Normal (App (App (App (App (Var "Transform:mkbox") (ListExp [Lit (Char 'd'),Lit (Char 'e'),Lit (Char 'm'),Lit (Char 'u'),Lit (Char 'x'),Lit (Char '1')])) (ListExp [Var "c'1'6",Var "x'2'8"])) (ListExp [Var "p'4'10",Var "q'3'12"])) (ListExp [Var "p'4'10",Var "q'3'12"]))) []
+*** Ending transformation of demux1
+/home/jtod/Hydra/develop/doc/examples/netlist/CircTest3_Lbl.hs:11: Splicing declarations
+    transform_module circ_defs_rep
+  ======>
+    demux1 c'1'5 x'2'7
+	     = (p'4'10, q'3'12)
+	     where
+		 p'4'9 = Signal.and2 Signal.inv c'1'6 x'2'8
+		 q'3'11 = Signal.and2 c'1'6 x'2'8
+		 p'4'10 = alias p'4'9 "p'4'9" box Equation 0 CluVar "p'4"
+		 q'3'12 = alias q'3'11 "q'3'11" box Equation 1 CluVar "q'3"
+		 c'1'6 = alias c'1'5 "c'1'5" box InportArg 0 CluVar "c'1"
+		 x'2'8 = alias x'2'7 "x'2'7" box InportArg 1 CluVar "x'2"
+		 box = Transform.mkbox ['d', 'e', 'm', 'u', 'x', '1']
+				       [c'1'6, x'2'8]
+				       [p'4'10, q'3'12]
+				       [p'4'10, q'3'12]
+    demux1 ::
+	forall a'0. (Signal.Signal a'0) => a'0 -> a'0 -> (a'0, a'0)
+Compiling Format           ( /home/jtod/Hydra/develop/tools/textio/Format.lhs, interpreted )
+Compiling NetlistTest3     ( /home/jtod/Hydra/develop/doc/examples/netlist/NetlistTest3.lhs, interpreted )
+Ok, modules loaded: NetlistTest3, Format, CircTest3_Lbl, SigStream, SigBool, SigStruct, Group, CircTest3_Code, Transform, Signal.
+*NetlistTest3> 

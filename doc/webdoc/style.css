@@ -1,0 +1,50 @@
+  body {
+   color: black; background: white;
+   margin-left: 7%;
+   margin-right: 7%;
+   }
+  H1 {color: black;  background: rgb(230,255,230);}
+  H2 {color: blue;}
+  H3 {color: blue; margin-left:-6%}
+  H4 {color: red; margin-left: -4%}
+  H5 {color: black; margin-left: -2%}
+  H1,H2 {font-family: sans-serif;}
+  em {font-style: italic;}
+  pre {font-family: monospace;}
+  div.highlight {
+    background: rgb(230,255,230);
+    }
+  div.box {
+    border: solid; border-width: thin; border-color: red;
+    padding-left: 1em; padding-right: 1em;
+    padding-top: .5em; padding-bottom: .5em;
+    }
+  div.color {
+    background: yellow;
+    padding: 0.5em;
+    border: none;
+    }
+  div.manualheader {
+    background: rgb(230,255,230);}
+    padding: 0.5em;
+    border: none;
+    }
+  table {
+     margin-left: 1em;
+     }
+  div.code {
+     padding-left: .5em; padding-bottom: 0em;
+     margin-top: 1em; margin-bottom: 1em;
+     margin-left: 1em;
+     border: none;
+     }
+  div.citation {
+     background: #CCFFCC;
+     width: 100%;
+     border: solid; border-width: thin;
+     margin-top: 1em; margin-bottom: 1em;
+     margin-left: 1em;
+     padding-left: 1em; padding-right:1em;
+     }
+
+

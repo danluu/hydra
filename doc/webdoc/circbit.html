@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd"> 
+
+<html>
+<head>
+<title>Bit Level Circuits</title>
+</head>
+
+<div class=manualheader align=center>
+<a href="index.html">Hydra Reference Manual</a>
+</div>
+
+<h1 align=center>Bit Level Circuits</h1>
+
+<h3 align=center>[<a href="contents.html">Up to contents</a>]</h3>
+
+This section describes the circuits that operate on individual bits,
+including basic logic gates and basic building blocks.
+
+The name `a' is the bit signal type (for example, Bool).
+
+<h3>Constant signal values</h3>
+
+These constant values are defined for all signal types.
+
+<table cellpadding=5 border=1>
+<tr> <td> <em> Component </em> </td>
+     <td> <em> Type </em> </td>
+     <td> <em> Description </em> </td>
+     </tr>
+<tr> <td> zero </td>
+     <td> a </td>
+     <td> Constant signal 0 </td>
+     </tr>
+<tr> <td> one </td>
+     <td> a </td>
+     <td> Constant signal 1 </td>
+     </tr>
+</table>
+
+<h3>Logic gates</h3>
+
+These components are defined for all signal types.
+
+<table cellpadding=5 border=1>
+<tr> <td> <em> Component </em> </td>
+     <td> <em> Type </em> </td>
+     <td> <em> Description </em> </td>
+     </tr>
+<tr> <td> buf </td>
+     <td>  a -> a </td>
+     <td> Buffer: amplifies signal but doesn't change it</td>
+     </tr>
+<tr> <td> inv </td>
+     <td> a -> a </td>
+     <td> Inverter: logical negation of input</td>
+     </tr>
+<tr> <td> and2 </td>
+     <td> a -> a -> a </td>
+     <td> 2-input and gate</td>
+     </tr>
+<tr> <td> nand2 </td>
+     <td> a -> a -> a </td>
+     <td> 2-input not-and gate</td>
+     </tr>
+<tr> <td> or2 </td>
+     <td> a -> a -> a </td>
+     <td> 2-input inclusive or gate</td>
+     </tr>
+<tr> <td> nor2 </td>
+     <td> a -> a -> a </td>
+     <td> 2-input not-or gate</td>
+     </tr>
+<tr> <td> xor2 </td>
+     <td> a -> a -> a </td>
+     <td> 2-input exclusive or gate</td>
+     </tr>
+<tr> <td> xnor2 </td>
+     <td> a -> a -> a </td>
+     <td> negation of xor2</td>
+     </tr>
+<tr> <td> and3 </td>
+     <td> a -> a -> a -> a </td>
+     <td> 3-input and gate</td>
+     </tr>
+<tr> <td> nand3 </td>
+     <td> a -> a -> a -> a </td>
+     <td> 3-input not-and gate</td>
+     </tr>
+<tr> <td> or3 </td>
+     <td> a -> a -> a -> a </td>
+     <td> 3-input inclusive or gate</td>
+     </tr>
+<tr> <td> nor3 </td>
+     <td> a -> a -> a -> a </td>
+     <td> 3-input not-or gate</td>
+     </tr>
+<tr> <td> xor3 </td>
+     <td> a -> a -> a -> a </td>
+     <td> 3-input exclusive or gate</td>
+     </tr>
+<tr> <td> xnor3 </td>
+     <td> a -> a -> a -> a </td>
+     <td> negation of xor3</td>
+     </tr>
+<tr> <td> and4 </td>
+     <td> a -> a -> a -> a -> a </td>
+     <td> 4-input and gate</td>
+     </tr>
+<tr> <td> nand4 </td>
+     <td> a -> a -> a -> a -> a </td>
+     <td> 4-input not-and gate</td>
+     </tr>
+<tr> <td> or4 </td>
+     <td> a -> a -> a -> a -> a </td>
+     <td> 4-input inclusive or gate</td>
+     </tr>
+<tr> <td> nor4 </td>
+     <td> a -> a -> a -> a -> a </td>
+     <td> 4-input not-or gate</td>
+     </tr>
+<tr> <td> xor4 </td>
+     <td> a -> a -> a -> a -> a </td>
+     <td> 4-input exclusive or gate</td>
+     </tr>
+<tr> <td> xnor4 </td>
+     <td> a -> a -> a -> a -> a </td>
+     <td> negation of xor4</td>
+     </tr>
+</table>
+
+<h3>Basic combinational circuits</h3>
+
+
+<table cellpadding=5 border=1>
+<tr> <td> <em> Component </em> </td>
+     <td> <em> Type </em> </td>
+     <td> <em> Description </em> </td>
+     </tr>
+<tr> <td> mux1 </td>
+     <td>  a -> a -> a -> a </td>
+     <td> multiplexor: mux1 p a b = if p=0 then a else b</td>
+     </tr>
+<tr> <td> mux2 </td>
+     <td>  a -> a -> a -> a </td>
+     <td> multiplexor with 2 control bits:<br>
+          mux2 p a b c d = <br>
+           <sp>if p=(0,0) then a, (0,1) then b <br>
+           (1,0) then c, (1,1) then d</td>
+     </tr>
+</table>
+
+</html>

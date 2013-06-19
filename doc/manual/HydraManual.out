@@ -1,0 +1,111 @@
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}
+\BOOKMARK [0][-]{chapter.2}{Signals and Components}{}
+\BOOKMARK [1][-]{section.2.1}{Modelling Circuits as Functions}{chapter.2}
+\BOOKMARK [1][-]{section.2.2}{Logic Gates}{chapter.2}
+\BOOKMARK [1][-]{section.2.3}{Connections}{chapter.2}
+\BOOKMARK [1][-]{section.2.4}{Circuit Definitions}{chapter.2}
+\BOOKMARK [1][-]{section.2.5}{Equations}{chapter.2}
+\BOOKMARK [1][-]{section.2.6}{Specification Modules}{chapter.2}
+\BOOKMARK [0][-]{chapter.3}{Circuit Types}{}
+\BOOKMARK [1][-]{section.3.1}{Semantic Models and Signal Classes}{chapter.3}
+\BOOKMARK [2][-]{subsection.3.1.1}{Combinational Circuits}{section.3.1}
+\BOOKMARK [2][-]{subsection.3.1.2}{Sequential Circuits}{section.3.1}
+\BOOKMARK [2][-]{subsection.3.1.3}{Feedback}{section.3.1}
+\BOOKMARK [1][-]{section.3.2}{Grouped Signals}{chapter.3}
+\BOOKMARK [2][-]{subsection.3.2.1}{Tuples}{section.3.2}
+\BOOKMARK [2][-]{subsection.3.2.2}{Words}{section.3.2}
+\BOOKMARK [1][-]{section.3.3}{Input and Output Ports}{chapter.3}
+\BOOKMARK [2][-]{subsection.3.3.1}{Port Specifications}{section.3.3}
+\BOOKMARK [2][-]{subsection.3.3.2}{Multiple Inputs}{section.3.3}
+\BOOKMARK [2][-]{subsection.3.3.3}{Multiple Outputs}{section.3.3}
+\BOOKMARK [2][-]{subsection.3.3.4}{Fanout and Partial Applications}{section.3.3}
+\BOOKMARK [0][-]{chapter.4}{A Library of Circuits}{}
+\BOOKMARK [1][-]{section.4.1}{Bit level circuits}{chapter.4}
+\BOOKMARK [2][-]{subsection.4.1.1}{Constant signal values}{section.4.1}
+\BOOKMARK [2][-]{subsection.4.1.2}{Logic gates}{section.4.1}
+\BOOKMARK [2][-]{subsection.4.1.3}{Basic combinational circuits}{section.4.1}
+\BOOKMARK [0][-]{chapter.5}{Simulation}{}
+\BOOKMARK [1][-]{section.5.1}{Combinational Logic Simulation}{chapter.5}
+\BOOKMARK [2][-]{subsection.5.1.1}{Applying a Circuit to its Inputs}{section.5.1}
+\BOOKMARK [2][-]{subsection.5.1.2}{Generating Truth Tables}{section.5.1}
+\BOOKMARK [2][-]{subsection.5.1.3}{Number System Conversions}{section.5.1}
+\BOOKMARK [1][-]{section.5.2}{Sequential Simulation}{chapter.5}
+\BOOKMARK [2][-]{subsection.5.2.1}{Providing Input to a Circuit}{section.5.2}
+\BOOKMARK [2][-]{subsection.5.2.2}{Interpreting the Output from a Circuit}{section.5.2}
+\BOOKMARK [2][-]{subsection.5.2.3}{Simulation Drivers}{section.5.2}
+\BOOKMARK [2][-]{subsection.5.2.4}{Example: A Simple Simulation Driver}{section.5.2}
+\BOOKMARK [2][-]{subsection.5.2.5}{Batch Testing}{section.5.2}
+\BOOKMARK [0][-]{chapter.6}{Design Patterns}{}
+\BOOKMARK [1][-]{section.6.1}{Mapping}{chapter.6}
+\BOOKMARK [2][-]{subsection.6.1.1}{General map}{section.6.1}
+\BOOKMARK [2][-]{subsection.6.1.2}{Explicitly Sized Map}{section.6.1}
+\BOOKMARK [2][-]{subsection.6.1.3}{Bit Slice Organization}{section.6.1}
+\BOOKMARK [1][-]{section.6.2}{Linear Folding}{chapter.6}
+\BOOKMARK [1][-]{section.6.3}{Linear Scanning}{chapter.6}
+\BOOKMARK [2][-]{subsection.6.3.1}{Inclusive Scans}{section.6.3}
+\BOOKMARK [2][-]{subsection.6.3.2}{Mapping Scans}{section.6.3}
+\BOOKMARK [2][-]{subsection.6.3.3}{Bidirectional Scans}{section.6.3}
+\BOOKMARK [1][-]{section.6.4}{Tree Patterns}{chapter.6}
+\BOOKMARK [2][-]{subsection.6.4.1}{Tree Expansion: Downsweep}{section.6.4}
+\BOOKMARK [2][-]{subsection.6.4.2}{Tree Reduction: Upsweep}{section.6.4}
+\BOOKMARK [2][-]{subsection.6.4.3}{Bidirectional Tree Sweep}{section.6.4}
+\BOOKMARK [1][-]{section.6.5}{Explicit Recursion}{chapter.6}
+\BOOKMARK [0][-]{chapter.7}{Combinational Design}{}
+\BOOKMARK [1][-]{section.7.1}{Fanout}{chapter.7}
+\BOOKMARK [1][-]{section.7.2}{Multiplexers and Demultiplexers}{chapter.7}
+\BOOKMARK [1][-]{section.7.3}{Ripple Carry Adder}{chapter.7}
+\BOOKMARK [2][-]{subsection.7.3.1}{Specification}{section.7.3}
+\BOOKMARK [2][-]{subsection.7.3.2}{Implementation}{section.7.3}
+\BOOKMARK [2][-]{subsection.7.3.3}{Simulation}{section.7.3}
+\BOOKMARK [2][-]{subsection.7.3.4}{Subtraction}{section.7.3}
+\BOOKMARK [1][-]{section.7.4}{Binary Integer Comparison}{chapter.7}
+\BOOKMARK [2][-]{subsection.7.4.1}{Simulation Driver for Comparitor}{section.7.4}
+\BOOKMARK [1][-]{section.7.5}{Design of an ALU}{chapter.7}
+\BOOKMARK [0][-]{chapter.8}{Sequential Design}{}
+\BOOKMARK [1][-]{section.8.1}{Shift Registers}{chapter.8}
+\BOOKMARK [1][-]{section.8.2}{Bidirectional Shift Registers}{chapter.8}
+\BOOKMARK [1][-]{section.8.3}{Memory}{chapter.8}
+\BOOKMARK [1][-]{section.8.4}{Sequential Multiplier}{chapter.8}
+\BOOKMARK [2][-]{subsection.8.4.1}{Specification}{section.8.4}
+\BOOKMARK [2][-]{subsection.8.4.2}{Implementation}{section.8.4}
+\BOOKMARK [2][-]{subsection.8.4.3}{Simulation}{section.8.4}
+\BOOKMARK [0][-]{chapter.9}{Basic Datapath Architecture}{}
+\BOOKMARK [1][-]{section.9.1}{Register File}{chapter.9}
+\BOOKMARK [2][-]{subsection.9.1.1}{Specification}{section.9.1}
+\BOOKMARK [2][-]{subsection.9.1.2}{Implementation}{section.9.1}
+\BOOKMARK [2][-]{subsection.9.1.3}{Simulation}{section.9.1}
+\BOOKMARK [1][-]{section.9.2}{The Register Transfer Machine}{chapter.9}
+\BOOKMARK [2][-]{subsection.9.2.1}{Specification}{section.9.2}
+\BOOKMARK [2][-]{subsection.9.2.2}{Implementation}{section.9.2}
+\BOOKMARK [2][-]{subsection.9.2.3}{Simulation}{section.9.2}
+\BOOKMARK [0][-]{chapter.10}{Control}{}
+\BOOKMARK [0][-]{chapter.11}{Example: The M1 System Architecture}{}
+\BOOKMARK [1][-]{section.11.1}{Instruction Set Architecture}{chapter.11}
+\BOOKMARK [1][-]{section.11.2}{Example Program: Maximum of an Array}{chapter.11}
+\BOOKMARK [1][-]{section.11.3}{Primary Datapath Subsystems}{chapter.11}
+\BOOKMARK [1][-]{section.11.4}{Control Signals}{chapter.11}
+\BOOKMARK [1][-]{section.11.5}{Control Algorithm}{chapter.11}
+\BOOKMARK [1][-]{section.11.6}{Datapath}{chapter.11}
+\BOOKMARK [1][-]{section.11.7}{Running a Program on M1}{chapter.11}
+\BOOKMARK [0][-]{chapter.12}{Exercises}{}
+\BOOKMARK [0][-]{appendix.A}{Installation}{}
+\BOOKMARK [1][-]{section.A.1}{Check that ghci is Installed}{appendix.A}
+\BOOKMARK [1][-]{section.A.2}{Locate the Hydra Software}{appendix.A}
+\BOOKMARK [1][-]{section.A.3}{Prepare a Working Directory}{appendix.A}
+\BOOKMARK [1][-]{section.A.4}{Verify that the Installation is Working}{appendix.A}
+\BOOKMARK [0][-]{appendix.B}{Signal Classes}{}
+\BOOKMARK [0][-]{appendix.C}{Combinational Circuits}{}
+\BOOKMARK [1][-]{section.C.1}{Fanout}{appendix.C}
+\BOOKMARK [1][-]{section.C.2}{Bit Slice Organization}{appendix.C}
+\BOOKMARK [1][-]{section.C.3}{Combinational Shifting}{appendix.C}
+\BOOKMARK [1][-]{section.C.4}{Multiplexers}{appendix.C}
+\BOOKMARK [1][-]{section.C.5}{Demultiplexers}{appendix.C}
+\BOOKMARK [1][-]{section.C.6}{Basic Arithmetic}{appendix.C}
+\BOOKMARK [1][-]{section.C.7}{Operations on Words and Tuples}{appendix.C}
+\BOOKMARK [1][-]{section.C.8}{Word Expansion}{appendix.C}
+\BOOKMARK [1][-]{section.C.9}{Word Reduction}{appendix.C}
+\BOOKMARK [0][-]{appendix.D}{Sequential Circuits}{}
+\BOOKMARK [1][-]{section.D.1}{Registers}{appendix.D}
+\BOOKMARK [1][-]{section.D.2}{Memory}{appendix.D}
+\BOOKMARK [1][-]{section.D.3}{Sequential Functional Units}{appendix.D}
+\BOOKMARK [0][-]{appendix.E}{Simulation Drivers}{}

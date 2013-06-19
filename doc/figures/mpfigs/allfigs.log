@@ -1,0 +1,288 @@
+This is pdfTeX, Version 3.14159-14h-released-20010417 (Web2C 7.3.3.1) (format=pdflatex 2001.5.31)  19 OCT 2001 15:54
+**allfigs
+(./allfigs.tex{/export_cmhask/TeX/texmf-var/pdftex/config/pdftex.cfg}
+LaTeX2e <2000/06/01>
+Babel <v3.7h> and hyphenation patterns for english, dumylang, nohyphenation, lo
+aded.
+(/export_cmhask/TeX/texmf/tex/latex/base/book.cls
+Document Class: book 2000/05/19 v1.4b Standard LaTeX document class
+(/export_cmhask/TeX/texmf/tex/latex/base/bk10.clo
+File: bk10.clo 2000/05/19 v1.4b Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/export_cmhask/TeX/texmf/tex/latex/amslatex/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip43
+
+For additional information on amsmath, use the `?' option.
+(/export_cmhask/TeX/texmf/tex/latex/amslatex/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/export_cmhask/TeX/texmf/tex/latex/amslatex/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks14
+\ex@=\dimen103
+))
+(/export_cmhask/TeX/texmf/tex/latex/amslatex/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen104
+)
+(/export_cmhask/TeX/texmf/tex/latex/amslatex/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count88
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count89
+\leftroot@=\count90
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count91
+\DOTSCASE@=\count92
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count93
+\c@MaxMatrixCols=\count94
+\dotsspace@=\muskip10
+\c@parentequation=\count95
+\dspbrk@lvl=\count96
+\tag@help=\toks15
+\row@=\count97
+\column@=\count98
+\maxfields@=\count99
+\andhelp@=\toks16
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks17
+\multlinegap=\skip44
+\multlinetaggap=\skip45
+\mathdisplay@stack=\toks18
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/export_cmhask/TeX/texmf/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 1996/11/03 v2.2b
+
+(/export_cmhask/TeX/texmf/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 1997/09/17 v2.2e
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 133.
+))
+(/export_cmhask/TeX/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 1999/02/16 v1.0l Standard LaTeX Graphics (DPC,SPQR)
+
+(/export_cmhask/TeX/texmf/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/export_cmhask/TeX/texmf/tex/latex/texlive/graphics.cfg
+File: graphics.cfg 2001/03/31 v1.0 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 80.
+
+(/export_cmhask/TeX/texmf/tex/latex/graphics/pdftex.def
+File: pdftex.def 2000/11/10 v0.03f graphics/color for pdftex
+\Gread@gobject=\count100
+))
+(/export_cmhask/TeX/texmf/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2001/04/05 v6.71e Hypertext links for LaTeX
+
+(/export_cmhask/TeX/texmf/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks19
+)
+\@linkdim=\dimen112
+\Hy@linkcounter=\count101
+\Hy@pagecounter=\count102
+
+(/export_cmhask/TeX/texmf/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2001/04/05 v6.71e Hyperref: PDFDocEncoding definition (HO)
+)
+(/export_cmhask/TeX/texmf/tex/latex/texlive/hyperref.cfg)
+Package hyperref Info: Bookmarks ON on input line 1661.
+Package hyperref Info: Hyper figures OFF on input line 1680.
+Package hyperref Info: Link nesting OFF on input line 1685.
+Package hyperref Info: Hyper index ON on input line 1688.
+Package hyperref Info: Plain pages ON on input line 1693.
+Package hyperref Info: Backreferencing OFF on input line 1700.
+
+Implicit mode ON; LaTeX internals redefined
+(/export_cmhask/TeX/texmf/tex/latex/ltxmisc/url.sty
+\Urlmuskip=\muskip11
+Package: url 1999/03/28  ver 1.5x  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 1905.
+\Fld@menulength=\count103
+\Field@Width=\dimen113
+\Fld@charsize=\dimen114
+\Choice@toks=\toks20
+\Field@toks=\toks21
+Package hyperref Info: Hyper figures OFF on input line 2351.
+Package hyperref Info: Link nesting OFF on input line 2356.
+Package hyperref Info: Hyper index ON on input line 2359.
+Package hyperref Info: backreferencing OFF on input line 2366.
+Package hyperref Info: Link coloring OFF on input line 2371.
+\c@Item=\count104
+\c@Hfootnote=\count105
+)
+*hyperref using driver hpdftex*
+(/export_cmhask/TeX/texmf/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2001/04/05 v6.71e Hyperref driver for pdfTeX
+
+(/export_cmhask/TeX/texmf/tex/latex/psnfss/pifont.sty
+Package: pifont 2000/01/12 PSNFSS-v8.1 Pi font support (SPQR) 
+LaTeX Font Info:    Try loading font information for U+pzd on input line 62.
+
+(/export_cmhask/TeX/texmf/tex/latex/psnfss/upzd.fd
+File: upzd.fd 2000/01/12 PSNFSS-v8.1 font definitions for U/pzd.
+)
+LaTeX Font Info:    Try loading font information for U+psy on input line 63.
+
+(/export_cmhask/TeX/texmf/tex/latex/psnfss/upsy.fd
+File: upsy.fd 2000/01/12 PSNFSS-v8.1 font definitions for U/psy.
+))
+\Fld@listcount=\count106
+\@outlinefile=\write3
+) (./allfigs.aux)
+\openout1 = `allfigs.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+
+(/export_cmhask/TeX/texmf/tex/context/base/supp-pdf.tex
+(/export_cmhask/TeX/texmf/tex/context/base/supp-mis.tex
+loading : Context Support Macros / Missing
+\protectiondepth=\count107
+\scratchcounter=\count108
+\scratchtoks=\toks22
+\scratchdimen=\dimen115
+\scratchskip=\skip46
+\scratchmuskip=\muskip12
+\scratchbox=\box28
+\scratchread=\read1
+\scratchwrite=\write4
+\nextbox=\box29
+\nextdepth=\dimen116
+\everyline=\toks23
+\!!counta=\count109
+\!!countb=\count110
+\recursecounter=\count111
+)
+loading : Context Support Macros / PDF
+\nofMPsegments=\count112
+\nofMParguments=\count113
+\everyMPtoPDFconversion=\toks24
+)
+Package hyperref Info: Link coloring OFF on input line 16.
+ (/export_cmhask/TeX/texmf/tex/latex/hyperref/nameref.sty
+Package: nameref 2001/01/27 v2.19 Cross-referencing by name of section
+\c@section@level=\count114
+) (./allfigs.out)
+(./allfigs.out)
+\openout3 = `allfigs.out'.
+
+LaTeX Info: Redefining \ref on input line 16.
+LaTeX Info: Redefining \pageref on input line 16.
+LaTeX Font Info:    Try loading font information for U+msa on input line 17.
+ (/export_cmhask/TeX/texmf/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 1995/01/05 v2.2e AMS font definitions
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 17.
+
+(/export_cmhask/TeX/texmf/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 1995/01/05 v2.2e AMS font definitions
+) [1
+
+
+{/export_cmhask/TeX/texmf/pdftex/config/psfonts.map}{/export_cmhask/TeX/texmf/p
+dftex/config/lw35.map}
+Warning: pdftex (file rawfonts.map): cannot open font map file
+
+Warning: pdftex (file csfontd.mapfile): cannot open font map file
+]
+File: figure1.mps Graphic file (type mps)
+ [MP to PDF figure1.mps] (./figure1.mps)
+File: figure2.mps Graphic file (type mps)
+ [MP to PDF figure2.mps]
+(./figure2.mps)
+File: figure3.mps Graphic file (type mps)
+ [MP to PDF figure3.mps] (./figure3.mps)
+File: figure4.mps Graphic file (type mps)
+
+[MP to PDF figure4.mps] (./figure4.mps)
+Overfull \hbox (0.28998pt too wide) in paragraph at lines 30--30
+ [] 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2]
+File: figure5.mps Graphic file (type mps)
+
+[MP to PDF figure5.mps] (./figure5.mps)
+Overfull \hbox (1.29373pt too wide) in paragraph at lines 31--31
+ [] 
+ []
+
+File: figure6.mps Graphic file (type mps)
+[MP to PDF figure6.mps] (./figure6.mps) [3]
+File: figure7.mps Graphic file (type mps)
+ [MP to PDF figure7.mps]
+(./figure7.mps)
+File: figure8.mps Graphic file (type mps)
+ [MP to PDF figure8.mps] (./figure8.mps)
+File: figure9.mps Graphic file (type mps)
+
+[MP to PDF figure9.mps] (./figure9.mps) [4] (./allfigs.aux) ) 
+Here is how much of TeX's memory you used:
+ 3295 strings out of 50485
+ 41580 string characters out of 440718
+ 135144 words of memory out of 1500001
+ 6209 multiletter control sequences out of 10000+15000
+ 11451 words of font info for 42 fonts, out of 210000 for 1000
+ 14 hyphenation exceptions out of 1000
+ 27i,6n,24p,219b,348s stack positions out of 3000i,500n,3000p,200000b,5000s
+</export_cmhask/Te
+X/texmf/fonts/type1/bluesky/cm/cmr7.pfb></export_cmhask/TeX/texmf/fonts/type1/b
+luesky/cm/cmr9.pfb></export_cmhask/TeX/texmf/fonts/type1/bluesky/cm/cmsy9.pfb><
+/export_cmhask/TeX/texmf/fonts/type1/bluesky/cm/cmr6.pfb></export_cmhask/TeX/te
+xmf/fonts/type1/bluesky/cm/cmmi9.pfb></export_cmhask/TeX/texmf/fonts/type1/blue
+sky/cm/cmsy7.pfb></export_cmhask/TeX/texmf/fonts/type1/bluesky/cm/cmti10.pfb></
+export_cmhask/TeX/texmf/fonts/type1/bluesky/cm/cmmi10.pfb></export_cmhask/TeX/t
+exmf/fonts/type1/bluesky/cm/cmr10.pfb></export_cmhask/TeX/texmf/fonts/type1/blu
+esky/cm/cmr12.pfb></export_cmhask/TeX/texmf/fonts/type1/bluesky/cm/cmr17.pfb>
+Output written on allfigs.pdf (4 pages, 65854 bytes).

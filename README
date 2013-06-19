@@ -1,0 +1,24 @@
+	   The Hydra Computer Hardware Description Language
+			    John O'Donnell
+			University of Glasgow
+
+Hydra is a Computer Hardware Description Language that supports the
+design of digital circuits and computer architectures.  It is based on
+the functional programming language Haskell, and it includes software
+tools for circuit specification, simulation, and analysis, as well as
+support for mathematical reasoning about circuit behavior.  For more
+information, documentation, and related research papers, see the web
+page: www.dcs.gla.ac.uk/~jtod/
+
+Copyright (c) 2003 John O'Donnell.  See the COPYING file for the full
+copyright.
+
+The system is currently under development; some features are not
+supported in this release.
+
+To get started, read the first tutorial in doc/tutorials/Tutorial1.lhs
+and follow the instructions there.  The reference manual is being
+written; a draft can be found in doc/manual/HydraManual.ps
+
+For instructions on installing the software, see
+doc/installation/install-notes.txt

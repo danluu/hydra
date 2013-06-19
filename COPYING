@@ -1,0 +1,26 @@
+	 The Hydra Computer Hardware Description Language
+			  John O'Donnell
+		       University of Glasgow
+
+Copyright (c) 2003 John O'Donnell
+
+The Hydra system comprises all the files in the Hydra distribution.
+There is absolutely no guarantee or warranty for this software.  Hydra
+is intended to be free software, and eventually it will have a
+standard free-software copyright such as the Gnu CopyLeft, but that
+isn't set up yet.  See the readme file for further information, and
+contact me directly if you have any questions.
+
+See the readme file, and visit the Hydra web page at
+  www.dcs.gla.ac.uk/~jtod/Hydra/
+
+John O'Donnell
+Computing Science Department
+University of Glasgow
+Glasgow G12 8QQ
+United Kingdom
+
+office:  +44 (141) 330-5458
+fax:     +44 (141) 330-4913
+email:   jtod@dcs.gla.ac.uk
+web:     http://www.dcs.gla.ac.uk/~jtod/

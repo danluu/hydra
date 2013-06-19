@@ -1,0 +1,326 @@
+
+Running the Simulations
+~~~~~~~~~~~~~~~~~~~~~~~
+
+sim_ripadd
+sim_regfile
+sim_regfile_dec
+sim_sr4
+sim_gen_sr_4
+sim_gen_sr_8
+sim_rtm
+sim_mult
+
+> {- where is ffcirc defined?
+> main :: IO ()
+> main =
+>  let x = ffcirc (input "a" a) (input "b" b)
+>      a = True
+>      b = False
+>      out = Singleton (Just "ffoutput") TopCluster x
+>  in hydraCLI out
+> -}
+
+> {-
+> test0 =
+>   let x :: [Stream Bool]
+>       x = [forever one, forever zero, forever one, forever zero]
+>       l = forever zero
+>       r = forever one
+>       op = (zero,  one) :: (Stream Bool, Stream Bool)
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       q = mux1 one one zero
+>       p = mux2 op one zero zero zero
+>       spec :: [Format Bool]
+>       spec = [FmtString "Input: ",
+>               FmtBit fmtBit [] op0,
+>               FmtBit fmtBit [] op1,
+>               FmtBit fmtBit "l" l,
+>               FmtBit fmtBit "r" r,
+>               FmtString " ",
+>               FmtWord fmtWord "x" 4 4 x,
+>               FmtString "    Output: ",
+>               FmtBit fmtBit [] q,
+>               FmtString " ",
+>               FmtWord fmtWord "y" 4 4 y]
+>   in run' 5 0 spec
+
+
+> test1 =
+>   let x :: [Stream Bool]
+>       x = [forever one, forever zero, forever one, forever zero]
+>       l = forever zero
+>       r = forever one
+>       op = (zero,  one) :: (Stream Bool, Stream Bool)
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       q = mux1 one one zero :: Stream Bool
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ", bits y]
+>   in run' 5 0 spec
+
+
+
+
+> test5a =  -- Just one register
+>   let k = 0  -- there are 2^0 = 1 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 0,  25],  -- R :=  25
+>         [0, 0, 0, 1,   0],  --
+>         [1, 7, 4, 7, 255],  -- R := 255
+>         [1, 1, 4, 7,  31],  -- R1 := 31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --
+>         [1, 2, 1, 7, 100],  -- R := 100
+>         [0, 0, 0, 0,   0]]  --
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run' (length input) 0 spec
+
+
+> test5b =  -- Just two registers
+>   let k = 1  -- there are 2^1 = 2 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb   x
+> --      ~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 1,  25],  -- R0 :=  25
+>         [0, 0, 0, 1,   0],  --
+>         [1, 1, 0, 1, 255],  -- R1 := 255
+>         [1, 0, 0, 1,  31],  -- R0 :=  31
+>         [0, 1, 0, 1,  50],  --
+>         [1, 1, 0, 1, 100],  -- R1 := 100
+>         [0, 0, 0, 1,   0]]  --
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run' (length input) 0 spec
+> -}
+
+
+> {- old
+> sim_ripadd =
+>   let n = 8
+>       input =
+>        [[0, 3,  8],
+>         [0, 4, 50]]
+>       ci = getbit   input 0 :: Stream Bool 
+>       x  = getbin n input 1
+>       y  = getbin n input 2
+>       (co,s) = rippleAdd ci (zipn n x y)
+>       spec :: [Format Bool]
+>       spec =
+>         [bit ci, bindec 4 x, bindec 4 y,
+>          string " Output: ", bit co, bindec 4 s]
+>   in run input spec
+> -}
+
+
+The Bidirectional Shift Register
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Meaning of op:
+     0 -- no state change
+     1 -- load input word x
+     2 -- shift right
+     3 -- shift left
+
+> sim_sr4 =
+>   let input =
+> --      op  l  r  x        op    produce  state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 9],  -- load     1001    0000
+>         [0, 0, 0, 3],  -- nop      1001    1001
+>         [2, 1, 0, 4],  -- right 1  1100    1001
+>         [2, 0, 0, 2],  -- right 0  0110    1100
+>         [3, 0, 1, 7],  -- left  1  1101    0110
+>         [1, 0, 0, 5],  -- load     0101    1101
+>         [0, 0, 0, 0]]  -- nop      0101    0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 4 input 3
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ", bits y]
+>   in run input spec
+
+
+We can define the shift register circuit more generally with the
+mscanr combinator; note that in this simulation, we use the general
+circuit "sr" rather than the restricted 4-bit sr4.  The test data
+is identical to that used above, and you can check that the circuit
+defined in this more general way has the same behaviour on this
+test data.
+
+> sim_gen_sr_4 =
+>   let input =
+> --      op  l  r  x        op    produce  state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 9],  -- load     1001    0000
+>         [0, 0, 0, 3],  -- nop      1001    1001
+>         [2, 1, 0, 4],  -- right 1  1100    1001
+>         [2, 0, 0, 2],  -- right 0  0110    1100
+>         [3, 0, 1, 7],  -- left  1  1101    0110
+>         [1, 0, 0, 5],  -- load     0101    1101
+>         [0, 0, 0, 0]]  -- nop      0101    0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 4 input 3
+>       (op0,op1) = op
+>       (p,q,y) = sr op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ",
+>               bit p, bit q, string " ", bits y]
+>   in run input spec
+
+Here is a similar example, but where the word size is increased to
+8.  Notice that all we had to do to change the wordsize was to
+change the number of bits in x; the general mscanr combinator
+automatically accommodates itself to the new word size!
+
+> sim_gen_sr_8 =
+>   let input =
+> --      op  l  r  x        op        state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 75],  -- load     0000 0000
+>         [0, 0, 0,  3],  -- nop      0100 1011
+>         [2, 1, 0,  4],  -- right 1  0100 1011
+>         [2, 0, 0,  2],  -- right 0  1010 0101
+>         [3, 0, 1,  7],  -- left  1  0101 0010
+>         [1, 0, 0,  5],  -- load     1010 0101
+>         [0, 0, 0,  0]]  -- nop      0000 0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 8 input 3  -- 8 bit words!
+>       (op0,op1) = op
+>       (p,q,y) = sr op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ",
+>               bit p, bit q, string " ", bits y]
+>   in run input spec
+
+
+old stuff from CombTest...
+
+
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"

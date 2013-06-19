@@ -1,0 +1,177 @@
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+
+This file describes how to install Hydra on your machine.  The same
+information can be found in the Hydra User's Manual.
+
+There are two pieces of software that need to be installed: the ghc
+Haskell compiler, and Hydra itself.  All of the software is free, and
+it runs on many platforms including GNU/Linux and Windows.  It should
+also run on Macintosh, but this hasn't been tested yet.
+
+
+---------------------------------------------------------------------------
+		      Installation on Gnu/Linux
+---------------------------------------------------------------------------
+
+
+1. Check that the Haskell compiler is installed
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are several implementations of Haskell, and any of them might
+work with Hydra.  However, Hydra is based on the Glasgow Haskell
+Compiler ghc, and it's recommended that you use this.  Future versions
+of Hydra may use features supported only by ghc. The Glasgow Haskell
+Compiler provides both a batch compiler ghc and an interactive
+interpreter ghci.  In this tutorial, we will run Hydra interactively
+using ghci.
+
+First check that you can run ghci.  One way is to use the shell
+command which ghci, which will tell you where ghci is installed.  Then
+enter ghci at the shell prompt.  If it launches correctly, it will
+produce a welcome banner and a prompt Prelude>.  Just type in :quit to
+exit the program.
+
+If the compiler is installed on your system but the ghci command
+doesn't work, you need to add its location to your PATH environment
+variable.
+
+If the compiler isn't on your system at all, you can install it.  It
+is free software, supported on a variety of platforms.  To obtain it,
+visit the Glasgow Haskell Compiler web page at
+
+  www.haskell.org/ghc/
+
+Alternatively, visit the Haskell Home Page at
+
+  www.haskell.org
+
+and follow the link to Compilers and Interpreters, and then the link
+to the Glasgow Haskell Compiler.  There you will find installation
+instructions, installable binaries, documentation, and sources.
+
+
+2. Locate the Hydra Software
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The entire system resides in a single directory named Hydra, which
+contains subdirectories for source files, binaries, and documentation.
+Find out where this directory is on your system.  If it isn't present,
+you can download it from the Hydra web page:
+
+  www.dcs.gla.ac.uk/\char'176 jtod/Hydra/
+
+The Hydra directory can be installed anywhere.  It can be placed in a
+global shared area, such as /usr/local/lib.  Alternatively, you can
+just copy it into your own file space.
+
+Define a shell alias HYDRA to point to the home directory for Hydra.
+If you use tcsh or csh, put a line similar to the following into your
+.cshrc file, replacing ... with the actual location of Hydra:
+
+  setenv HYDRA /.../Hydra
+
+Next, add the Hydra directory to your path so the shell can find it.
+With tcsh or csh, you can edit the PATH definition:
+
+  setenv PATH $HYDRA/bin:$PATH
+
+Now launch the system by typing "Hydra" after the prompt.
+
+  $ Hydra
+
+If all is well, you will see a banner welcoming you to the Haskell
+compilation system.   There will be a prompt which looks like
+
+  Prelude> 
+
+Now enter the following command:
+  Prelude> :load WordSeqTest
+
+If your installation is working properly, a set of simulations defined
+in teh WordSeqTest module will run.  You can now exit by entering
+:quit (or just :q).
+
+
+3. Prepare a Working Directory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a directory where you'll put your circuit specifications, and
+change to that directory.  When you tell Hydra (actually ghci) to load
+a file, it will look in the current directory.  Eventually, when you
+have several projects each comprising several files, you may want to
+organise them into subdirectories.  Later we'll see how to tell ghci
+how to find the appropriate files.
+
+In your working directory, create a file named TestCirc.hs containing
+the following text:
+
+  module TestCirc where
+
+  import Signal
+  import SigBool
+  import CombTools
+
+  testcirc :: Signal a => a -> a -> a -> a
+  testcirc a b c = or2 (and2 a b) c
+
+You can copy the directory Hydra/workspace directory from the Hydra
+installation; this already contains the TestCirc.hs file.
+
+
+4. Verify that the installation is working
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Start a new shell and enter the command Hydra at the shell prompt.
+The system should start with the ghci welcome, and it will end with a
+prompt Prelude>.  Note that the :?  command mentioned on the screen
+asks for Haskell help, not Hydra help!
+
+Now enter the following command:
+
+  :load TestCirc
+
+This tells the system to load your test file. It should respond by
+listing the files that are being loaded and compiled, and finally it
+will present a new prompt *TestCirc>.  Tell Hydra to generate a truth
+table for the circuit by entering
+
+  truthTable31 testcirc
+
+If the installation is working correctly, it will respond by printing
+
+    0 0 0 | 0
+    0 0 1 | 1
+    0 1 0 | 0
+    0 1 1 | 1
+    1 0 0 | 0
+    1 0 1 | 1
+    1 1 0 | 1
+    1 1 1 | 1
+
+
+5. Try some of the example testing modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In general, each module containing circuit definitions (e.g. WordSeq)
+is in a file with an extension of .lhs (e.g. WordSeq.lhs), and it has
+an associated testing module whose name ends in Test (for example
+WordSeqTest, in file WordSeqTest.lhs).  Only the Test modules should
+be executed, as these contain the software simulation drivers.  Thus
+to simulate a circuit defined in WordSeq, you would do this:
+
+Tell the system to load the test file for sequential circuits on
+words, by entering ":load WordSeqTest" after the prompt.  This module
+includes tests for a collection of sequential circuits that operate on
+words, including for example a sequential multiplier.
+
+  Prelude> :load WordSeqTest
+
+Then run the test cases by entering "main" after the prompt:
+
+  #WordSeqTest> main
+
+and the batch simulations defined in WordSeqTest will be executed.

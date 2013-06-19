@@ -1,0 +1,116 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
+\contentsline {chapter}{\numberline {2}Signals and Components}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Modelling Circuits as Functions}{3}{section.2.1}
+\contentsline {section}{\numberline {2.2}Logic Gates}{3}{section.2.2}
+\contentsline {section}{\numberline {2.3}Connections}{4}{section.2.3}
+\contentsline {section}{\numberline {2.4}Circuit Definitions}{5}{section.2.4}
+\contentsline {section}{\numberline {2.5}Equations}{5}{section.2.5}
+\contentsline {section}{\numberline {2.6}Specification Modules}{6}{section.2.6}
+\contentsline {chapter}{\numberline {3}Circuit Types}{7}{chapter.3}
+\contentsline {section}{\numberline {3.1}Semantic Models and Signal Classes}{7}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Combinational Circuits}{7}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Sequential Circuits}{7}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Feedback}{7}{subsection.3.1.3}
+\contentsline {section}{\numberline {3.2}Grouped Signals}{7}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Tuples}{8}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Words}{8}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}Input and Output Ports}{9}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Port Specifications}{9}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Multiple Inputs}{9}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}Multiple Outputs}{9}{subsection.3.3.3}
+\contentsline {subsection}{\numberline {3.3.4}Fanout and Partial Applications}{9}{subsection.3.3.4}
+\contentsline {chapter}{\numberline {4}A Library of Circuits}{10}{chapter.4}
+\contentsline {section}{\numberline {4.1}Bit level circuits}{10}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Constant signal values}{10}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Logic gates}{10}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Basic combinational circuits}{11}{subsection.4.1.3}
+\contentsline {chapter}{\numberline {5}Simulation}{12}{chapter.5}
+\contentsline {section}{\numberline {5.1}Combinational Logic Simulation}{12}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Applying a Circuit to its Inputs}{12}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}Generating Truth Tables}{13}{subsection.5.1.2}
+\contentsline {subsection}{\numberline {5.1.3}Number System Conversions}{14}{subsection.5.1.3}
+\contentsline {section}{\numberline {5.2}Sequential Simulation}{14}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Providing Input to a Circuit}{15}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}Interpreting the Output from a Circuit}{15}{subsection.5.2.2}
+\contentsline {subsection}{\numberline {5.2.3}Simulation Drivers}{16}{subsection.5.2.3}
+\contentsline {subsection}{\numberline {5.2.4}Example: A Simple Simulation Driver}{16}{subsection.5.2.4}
+\contentsline {subsection}{\numberline {5.2.5}Batch Testing}{18}{subsection.5.2.5}
+\contentsline {chapter}{\numberline {6}Design Patterns}{19}{chapter.6}
+\contentsline {section}{\numberline {6.1}Mapping}{19}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}General map}{19}{subsection.6.1.1}
+\contentsline {subsection}{\numberline {6.1.2}Explicitly Sized Map}{19}{subsection.6.1.2}
+\contentsline {subsection}{\numberline {6.1.3}Bit Slice Organization}{19}{subsection.6.1.3}
+\contentsline {section}{\numberline {6.2}Linear Folding}{20}{section.6.2}
+\contentsline {section}{\numberline {6.3}Linear Scanning}{20}{section.6.3}
+\contentsline {subsection}{\numberline {6.3.1}Inclusive Scans}{20}{subsection.6.3.1}
+\contentsline {subsection}{\numberline {6.3.2}Mapping Scans}{20}{subsection.6.3.2}
+\contentsline {subsection}{\numberline {6.3.3}Bidirectional Scans}{20}{subsection.6.3.3}
+\contentsline {section}{\numberline {6.4}Tree Patterns}{20}{section.6.4}
+\contentsline {subsection}{\numberline {6.4.1}Tree Expansion: Downsweep}{20}{subsection.6.4.1}
+\contentsline {subsection}{\numberline {6.4.2}Tree Reduction: Upsweep}{20}{subsection.6.4.2}
+\contentsline {subsection}{\numberline {6.4.3}Bidirectional Tree Sweep}{21}{subsection.6.4.3}
+\contentsline {section}{\numberline {6.5}Explicit Recursion}{21}{section.6.5}
+\contentsline {chapter}{\numberline {7}Combinational Design}{22}{chapter.7}
+\contentsline {section}{\numberline {7.1}Fanout}{22}{section.7.1}
+\contentsline {section}{\numberline {7.2}Multiplexers and Demultiplexers}{23}{section.7.2}
+\contentsline {section}{\numberline {7.3}Ripple Carry Adder}{23}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}Specification}{23}{subsection.7.3.1}
+\contentsline {subsection}{\numberline {7.3.2}Implementation}{23}{subsection.7.3.2}
+\contentsline {subsection}{\numberline {7.3.3}Simulation}{23}{subsection.7.3.3}
+\contentsline {subsection}{\numberline {7.3.4}Subtraction}{26}{subsection.7.3.4}
+\contentsline {section}{\numberline {7.4}Binary Integer Comparison}{26}{section.7.4}
+\contentsline {subsection}{\numberline {7.4.1}Simulation Driver for Comparitor}{26}{subsection.7.4.1}
+\contentsline {section}{\numberline {7.5}Design of an ALU}{27}{section.7.5}
+\contentsline {chapter}{\numberline {8}Sequential Design}{28}{chapter.8}
+\contentsline {section}{\numberline {8.1}Shift Registers}{28}{section.8.1}
+\contentsline {section}{\numberline {8.2}Bidirectional Shift Registers}{31}{section.8.2}
+\contentsline {section}{\numberline {8.3}Memory}{32}{section.8.3}
+\contentsline {section}{\numberline {8.4}Sequential Multiplier}{32}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}Specification}{32}{subsection.8.4.1}
+\contentsline {subsection}{\numberline {8.4.2}Implementation}{32}{subsection.8.4.2}
+\contentsline {subsection}{\numberline {8.4.3}Simulation}{32}{subsection.8.4.3}
+\contentsline {chapter}{\numberline {9}Basic Datapath Architecture}{35}{chapter.9}
+\contentsline {section}{\numberline {9.1}Register File}{35}{section.9.1}
+\contentsline {subsection}{\numberline {9.1.1}Specification}{35}{subsection.9.1.1}
+\contentsline {subsection}{\numberline {9.1.2}Implementation}{36}{subsection.9.1.2}
+\contentsline {subsection}{\numberline {9.1.3}Simulation}{36}{subsection.9.1.3}
+\contentsline {section}{\numberline {9.2}The Register Transfer Machine}{38}{section.9.2}
+\contentsline {subsection}{\numberline {9.2.1}Specification}{38}{subsection.9.2.1}
+\contentsline {subsection}{\numberline {9.2.2}Implementation}{38}{subsection.9.2.2}
+\contentsline {subsection}{\numberline {9.2.3}Simulation}{38}{subsection.9.2.3}
+\contentsline {chapter}{\numberline {10}Control}{40}{chapter.10}
+\contentsline {chapter}{\numberline {11}Example: The M1 System Architecture}{41}{chapter.11}
+\contentsline {section}{\numberline {11.1}Instruction Set Architecture}{41}{section.11.1}
+\contentsline {section}{\numberline {11.2}Example Program: Maximum of an Array}{41}{section.11.2}
+\contentsline {section}{\numberline {11.3}Primary Datapath Subsystems}{42}{section.11.3}
+\contentsline {section}{\numberline {11.4}Control Signals}{42}{section.11.4}
+\contentsline {section}{\numberline {11.5}Control Algorithm}{42}{section.11.5}
+\contentsline {section}{\numberline {11.6}Datapath}{43}{section.11.6}
+\contentsline {section}{\numberline {11.7}Running a Program on M1}{43}{section.11.7}
+\contentsline {paragraph}{Computer system inputs.}{44}{section*.2}
+\contentsline {paragraph}{Control state.}{44}{section*.3}
+\contentsline {paragraph}{Control signals.}{44}{section*.4}
+\contentsline {paragraph}{Datapath.}{44}{section*.5}
+\contentsline {paragraph}{Memory.}{44}{figure.11.1}
+\contentsline {chapter}{\numberline {12}Exercises}{46}{chapter.12}
+\contentsline {chapter}{\numberline {A}Installation}{49}{appendix.A}
+\contentsline {section}{\numberline {A.1}Check that \texttt {ghci} is Installed}{49}{section.A.1}
+\contentsline {section}{\numberline {A.2}Locate the Hydra Software}{49}{section.A.2}
+\contentsline {section}{\numberline {A.3}Prepare a Working Directory}{50}{section.A.3}
+\contentsline {section}{\numberline {A.4}Verify that the Installation is Working}{50}{section.A.4}
+\contentsline {chapter}{\numberline {B}Signal Classes}{51}{appendix.B}
+\contentsline {chapter}{\numberline {C}Combinational Circuits}{52}{appendix.C}
+\contentsline {section}{\numberline {C.1}Fanout}{52}{section.C.1}
+\contentsline {section}{\numberline {C.2}Bit Slice Organization}{52}{section.C.2}
+\contentsline {section}{\numberline {C.3}Combinational Shifting}{52}{section.C.3}
+\contentsline {section}{\numberline {C.4}Multiplexers}{53}{section.C.4}
+\contentsline {section}{\numberline {C.5}Demultiplexers}{54}{section.C.5}
+\contentsline {section}{\numberline {C.6}Basic Arithmetic}{54}{section.C.6}
+\contentsline {section}{\numberline {C.7}Operations on Words and Tuples}{54}{section.C.7}
+\contentsline {section}{\numberline {C.8}Word Expansion}{55}{section.C.8}
+\contentsline {section}{\numberline {C.9}Word Reduction}{55}{section.C.9}
+\contentsline {chapter}{\numberline {D}Sequential Circuits}{56}{appendix.D}
+\contentsline {section}{\numberline {D.1}Registers}{56}{section.D.1}
+\contentsline {section}{\numberline {D.2}Memory}{56}{section.D.2}
+\contentsline {section}{\numberline {D.3}Sequential Functional Units}{56}{section.D.3}
+\contentsline {chapter}{\numberline {E}Simulation Drivers}{57}{appendix.E}

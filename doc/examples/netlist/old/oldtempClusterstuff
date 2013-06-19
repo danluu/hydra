@@ -1,0 +1,47 @@
+
+> {- until end
+> data Context a d
+>   = Ctx_Sig (StrucSig a d)
+>   | Ctx_Clu (Cluster (StrucSig a d) d)
+>   | Ctx_Box (Box a d)
+> -}
+
+> {-
+> context_type :: Context a d -> String
+> context_type (Ctx_Sig _) = "Signal"
+> context_type (Ctx_Clu _) = "Cluster"
+> context_type (Ctx_Box _) = "Black Box"
+> -}
+
+> {-
+> loop :: [Context a d] -> IO ()
+> loop [] = putStr "Empty context, stopping\n"
+> loop xs@(x:xs') =
+>   do putStr ("current context: " ++ context_type x ++ "\n")
+>      c <- getLine
+>      putStr ("you entered: {" ++ c ++ "}\n")
+>      let cmd = read c :: Command
+>      putStr ("Command = " ++ show cmd ++ "\n")
+>      xs'' <- doCommand cmd xs
+>      loop xs''
+> -}
+
+
+
+> {-
+> showClu :: Cluster a d -> String
+> showClu (Singleton n p x) = "Singleton " ++ maybeName n
+> showClu (Tuple2 n p a b) = "Tuple2 " ++ maybeName n
+> showClu (Tuple3 n p a b c) = "Tuple3 " ++ maybeName n
+> -}
+
+showSig :: StrucSig a d -> String
+showSig (Definer b p s) = "Definer"
+showSig (Alias b p x) = "Alias"
+
+> {-
+> getClusterField :: Cluster (StrucSig a d) d -> Int -> Context a d
+> getClusterField (Singleton _ _ s) i  = Ctx_Sig s
+> getClusterField (Tuple2 _ _ a b) i   = Ctx_Clu ([a,b]!!i)
+> getClusterField (Tuple3 _ _ a b c) i = Ctx_Clu ([a,b,c]!!i)
+> -}

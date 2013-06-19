@@ -1,0 +1,994 @@
+The old type problem, before introducing foobar to force types
+to be the same before and after labelling
+
+:t blackbox1_Struc
+forall a a2 t b a1 b2 b3 b1.
+(Signal a1,
+  Clusterable
+      (StrucSig a1 t)
+      b1
+      (Box a1 t),
+  Clusterable
+      (StrucSig a1 t)
+      (Cluster (StrucSig a1 t) b2)
+      (Box a1 t),
+  LabClu a2 (Box a1 t),
+  Clusterable
+      (StrucSig a1t)
+      b
+      (Box a1 t),
+  Clusterable
+      (StrucSig a1 t)
+      (Cluster (StrucSig a1 t) b3)
+      (Box a1 t),
+  LabClu a (Box a1 t))
+ => String
+ -> a
+ -> a2
+ -> t
+ -> (b -> Cluster (StrucSig a1 t) b2)
+ -> Cluster (StrucSig a1 t) b3
+ -> b1
+SigStruct> 
+
+
+After using foobar, this is the type of blaclbox1_Struc
+
+
+SigStruct> :l SigStruct.lhs
+Compiling Signal           ( Signal.lhs, interpreted )
+Compiling HaskTools        ( HaskTools.lhs, interpreted )
+Compiling SigStruct        ( SigStruct.lhs, interpreted )
+Ok, modules loaded: SigStruct, HaskTools, Signal.
+(7.27 secs, 107841748 bytes)
+SigStruct> :t blackbox1_Struc
+forall a a2 t a1 b1 b.
+(Signal a1,
+ Clusterable
+   (StrucSig a1 t)
+   (Cluster (StrucSig a1 t) b)
+   (Box a1 t),
+ LabClu a2 (Box a1 t),
+ Clusterable
+   (StrucSig a1	t)
+   (Cluster (StrucSig a1 t) b1)
+   (Box a1 t),
+ LabClu a (Box a1t))
+ => String
+ -> a
+ -> a2
+ -> t
+ -> (Cluster (StrucSig a1 t) b1 -> Cluster (StrucSig a1 t) b)
+ -> Cluster (StrucSig a1 t) b1
+ -> Cluster (StrucSig a1 t) b
+
+SigStruct> 
+
+type of experiment...
+
+Ok, modules loaded: SigStruct, HaskTools, Signal.
+(7.46 secs, 109160024 bytes)
+SigStruct> :t experiment
+forall a1 a3 b b1 a t a2 t1.
+(Clusterable (StrucSig a2 t1) b1 (Box a2 t1),
+ LabClu a3 (Box a2 t1),
+ Clusterable (StrucSig a t) b (Box a t),
+ LabClu a1 (Box a t))
+ => a1
+ -> a3
+ -> (b -> b1)
+ -> b -> b1
+SigStruct> 
+
+Now barbaz was used to force the input and output clusters to be
+constructed from the same base types, so e.g. a=a2 and t=t1 in type
+type above.  The result is...
+
+>       dummy = barbaz a x     -- the clusters have same base types
+
+Ok, modules loaded: SigStruct, HaskTools, Signal.
+(6.53 secs, 109427748 bytes)
+SigStruct> :t experiment
+forall a1 a3 a4 b a t a2 t1.
+(Clusterable (StrucSig a2 t1) (Cluster a4 b) (Box a2 t1),
+ LabClu a3 (Box a2 t1),
+ Clusterable
+   (StrucSig a t)
+   (Cluster a4 b)
+   (Box a t),
+ LabClu a1 (Box a t))
+ => a1
+ -> a3
+ -> (Cluster a4 b -> Cluster a4 b)
+ -> Cluster a4 b
+ -> Cluster a4 b
+SigStruct> 
+
+oops!  of course a and x are not clusters at all!  The clusters are
+a2 and x2, produced by the label function.  Let's try
+
+>       dummy = barbaz a2 x2   -- the clusters have same base types
+
+Ok, modules loaded: SigStruct, HaskTools, Signal.
+(6.18 secs, 109156596 bytes)
+SigStruct> :t experiment
+forall a a2 b b1 a1 t.
+(Clusterable
+   (StrucSig a1 t)
+   b1
+   (Box a1 t),
+ LabClu a2 (Box a1 t),
+ Clusterable
+   (StrucSig a1 t)
+   b
+   (Box a1 t),
+ LabClu a (Box a1 t))
+ => a
+ -> a2
+ -> (b -> b1)
+ -> b -> b1
+SigStruct> 
+
+This looks like what I want.  Now try putting in my own type
+signature for experiment.
+
+But it doesn't work....
+
+SigStruct.lhs:765:
+    Could not deduce `LabClu a (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `LabClu a (Box a1 t)' to the type signature(s) for {experiment}
+	Or add an instance declaration for `LabClu a (Box a1 t)'
+    arising from use of `labClu' at SigStruct.lhs:765
+    In the second argument of `label', namely `(labClu alab)'
+    in the definition of function `a2':
+	label InPort (labClu alab) aclu undefined
+
+SigStruct.lhs:770:
+    Could not deduce `Clusterable (StrucSig a1 t) b (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `Clusterable (StrucSig a1 t) b (Box a1 t)'
+	to the type signature(s) for {experiment}
+	Or add an instance declaration for `Clusterable (StrucSig
+							     a1 t) b (Box a1 t)'
+    arising from use of `unrepClu' at SigStruct.lhs:770
+    In the first argument of `foobar', namely `(unrepClu a2)'
+    in the definition of function `a3': foobar (unrepClu a2) a
+
+SigStruct.lhs:773:
+    Could not deduce `LabClu a2 (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `LabClu a2 (Box a1 t)'
+	to the type signature(s) for {experiment}
+	Or add an instance declaration for `LabClu a2 (Box a1 t)'
+    arising from use of `labClu' at SigStruct.lhs:773
+    In the second argument of `label', namely `(labClu xlab)'
+    in the definition of function `x2':
+	label OutPort (labClu xlab) xclu undefined
+
+SigStruct.lhs:779:
+    Could not deduce `Clusterable (StrucSig a1 t) b1 (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `Clusterable (StrucSig a1 t) b1 (Box a1 t)'
+	to the type signature(s) for {experiment}
+	Or add an instance declaration for `Clusterable (StrucSig
+							     a1 t) b1 (Box a1 t)'
+    arising from use of `unrepClu' at SigStruct.lhs:779
+    In the first argument of `foobar', namely `(unrepClu x2)'
+    in the definition of function `x3': foobar (unrepClu x2) x
+Failed, modules loaded: HaskTools, Signal.
+(2.63 secs, 49888988 bytes)
+HaskTools> 
+
+
+It may be that I need forall or existential types, but will try
+once more: comment out type signature of experiment, then run ghci,
+enquire type, and put that in.
+
+Ok, modules loaded: SigStruct, HaskTools, Signal.
+(6.93 secs, 109161220 bytes)
+SigStruct> :t experiment
+forall a a2 b b1 a1 t.
+ (Clusterable (StrucSig a1 t) b1 (Box a1 t),
+  LabClu a2 (Box a1 t),
+  Clusterable (StrucSig a1 t) b (Box a1 t),
+  LabClu a (Box a1 t))
+ => a -> a2 -> (b -> b1) -> b -> b1
+SigStruct> 
+
+And here is the result, after putting the type above into the
+program and running ghci again...
+
+
+SigStruct.lhs:774:
+    Could not deduce `LabClu a (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `LabClu a (Box a1 t)' to the type signature(s) for {experiment}
+	Or add an instance declaration for `LabClu a (Box a1 t)'
+    arising from use of `labClu' at SigStruct.lhs:774
+    In the second argument of `label', namely `(labClu alab)'
+    in the definition of function `a2':
+	label InPort (labClu alab) aclu undefined
+
+SigStruct.lhs:779:
+    Could not deduce `Clusterable (StrucSig a1 t) b (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `Clusterable (StrucSig a1 t) b (Box a1 t)'
+	to the type signature(s) for {experiment}
+	Or add an instance declaration for `Clusterable (StrucSig
+							     a1 t) b (Box a1 t)'
+    arising from use of `unrepClu' at SigStruct.lhs:779
+    In the first argument of `foobar', namely `(unrepClu a2)'
+    in the definition of function `a3': foobar (unrepClu a2) a
+
+SigStruct.lhs:782:
+    Could not deduce `LabClu a2 (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `LabClu a2 (Box a1 t)'
+	to the type signature(s) for {experiment}
+	Or add an instance declaration for `LabClu a2 (Box a1 t)'
+    arising from use of `labClu' at SigStruct.lhs:782
+    In the second argument of `label', namely `(labClu xlab)'
+    in the definition of function `x2':
+	label OutPort (labClu xlab) xclu undefined
+
+SigStruct.lhs:788:
+    Could not deduce `Clusterable (StrucSig a1 t) b1 (Box a1 t)'
+	from the context (Clusterable (StrucSig a11 t1) b1 (Box a11 t1),
+			  LabClu a2 (Box a11 t1),
+			  Clusterable (StrucSig a11 t1) b (Box a11 t1),
+			  LabClu a (Box a11 t1))
+    Probable fix:
+	Add `Clusterable (StrucSig a1 t) b1 (Box a1 t)'
+	to the type signature(s) for {experiment}
+	Or add an instance declaration for `Clusterable (StrucSig
+							     a1 t) b1 (Box a1 t)'
+    arising from use of `unrepClu' at SigStruct.lhs:788
+    In the first argument of `foobar', namely `(unrepClu x2)'
+    in the definition of function `x3': foobar (unrepClu x2) x
+Failed, modules loaded: HaskTools, Signal.
+(3.38 secs, 49885788 bytes)
+HaskTools> 
+
+tried exper2, which simply takes a cluster and labels it, returning
+a similarly shaped cluster.
+
+> exper2 lab x =
+>   let xclu = repClu Nothing undefined x
+>       x2   = label
+>                InPort
+>                (labClu lab)
+>                xclu
+>                undefined
+>       x3   = unrepClu x2
+>   in x3
+
+Here is its type, by ghci
+
+SigStruct> :t exper2
+forall a1 b b1 a t.
+(Clusterable (StrucSig a t) b1 (Box a t),
+ LabClu a1 (Box a t),
+ Clusterable (StrucSig a t) b (Box a t))
+ => a1 -> b -> b1
+
+What I expected.  Now, attempt to force b1 and b to be the same
+type, using foobar.
+
+>       x3   = foobar (unrepClu x2) x
+
+Now we get...
+
+SigStruct> :t exper2
+forall a1 b a t.
+(Clusterable (StrucSig a t) b (Box a t),
+ LabClu a1 (Box a t))
+ => a1 -> b -> b
+SigStruct> 
+
+That's what I want!!!
+
+Now, I will give it my own signature... and ghci gives these
+messages.
+
+Compiling SigStruct        ( SigStruct.lhs, interpreted )
+
+SigStruct.lhs:806:
+    Could not deduce `LabClu b (Box a t)'
+	from the context (LabClu b (Box a1 t1),
+			  Clusterable (StrucSig a1 t1) c (Box a1 t1))
+    Probable fix:
+	Add `LabClu b (Box a t)' to the type signature(s) for {exper2}
+	Or add an instance declaration for `LabClu b (Box a t)'
+    arising from use of `labClu' at SigStruct.lhs:806
+    In the second argument of `label', namely `(labClu lab)'
+    in the definition of function `x2':
+	label InPort (labClu lab) xclu undefined
+
+SigStruct.lhs:811:
+    Could not deduce `Clusterable (StrucSig a t) c (Box a t)'
+	from the context (LabClu b (Box a1 t1),
+			  Clusterable (StrucSig a1 t1) c (Box a1 t1))
+    Probable fix:
+	Add `Clusterable (StrucSig a t) c (Box a t)'
+	to the type signature(s) for {exper2}
+	Or add an instance declaration for `Clusterable (StrucSig
+							     a t) c (Box a t)'
+    arising from use of `unrepClu' at SigStruct.lhs:811
+    In the first argument of `foobar', namely `(unrepClu x2)'
+    in the definition of function `x3': foobar (unrepClu x2) x
+Failed, modules loaded: SigBool, HaskTools, Signal, Combinator.
+(3.62 secs, 55940364 bytes)
+SigBool> 
+
+
+Without the type signature, ghci accepts the file but hugs does not
+
+Reading file "SigStruct.lhs":
+ERROR "SigStruct.lhs" (line 771): Ambiguous type signature in inferred type
+
+*** ambiguous type : (Clusterable (StrucSig a b) c (Box a b), LabClu d (Box a b), Clusterable (StrucSig a b) e (Box a b), LabClu f (Box a b)) => f -> d -> (e -> c) -> e -> c
+*** assigned to    : experiment
+
+SigBool> 
+
+question... is ghci able to run exper2 sensibly?
+
+> {- instance ClusterableTwo Int where
+>   fooclu x = x+1
+
+> test3 = fooclu 4 :: Int
+> -- test4 = fooclu 5    -- error
+> test5 = fooclu (6::Int) -}
+
+
+bboxtest1 is looking good...
+
+> bboxtest1 alab xlab f a =
+>   do let alabclu = labClu alab
+>      let a' = mkAlias InPort a
+>      let a'rep = cluit a'  :: Cluster (StrucSig Bool ()) ()
+>      let a'' = putLabel UnknownLocation alabclu a'rep
+>                   :: Cluster (StrucSig Bool ()) ()
+>      putStrLn ("a'' = " ++ showCluRep a'')
+>      let x = f a'
+>      let x' = mkAlias OutPort x
+>      let xlabclu = labClu xlab
+>      let x'rep = cluit x' :: Cluster (StrucSig Bool ()) ()
+>      let x'' = putLabel UnknownLocation xlabclu x'rep
+>      putStrLn ("x'' = " ++ showCluRep x'')
+>      let clus = [a'',x'']
+>      putStrLn "bboxtest1"
+>      return ()
+
+> test8 = bboxtest1 "abc" "def" inv testsigA
+> test9 = bboxtest1 ("ab","cd") ("ef","gh") ha (testsigA,testsigB)
+
+its type is
+
+SigStruct> :t bboxtest1
+forall a a3 a1 a2.
+(CluFlat a2 (StrucSig Bool ()),
+ LabClu a3 (),
+ ClusterableTwo a2,
+ CluFlat a1 (StrucSig Bool ()),
+ ClusterableTwo a1,
+ LabClu a ()) =>
+a -> a3 -> (a1 -> a2) -> a1 -> IO ()
+SigStruct> 
+
+Do I really need all three classes, CluFlat, LabClu and ClusterableTwo??
+
+> class CluFlat a b where
+>   cluit :: a -> Cluster b ()
+
+> instance CluFlat (StrucSig a b) (StrucSig a b) where
+>   cluit x = Singleton undefined undefined x
+
+> instance (CluFlat a t, CluFlat b t) => CluFlat (a,b) t where
+>   cluit (x,y) = Tuple2 Nothing undefined (cluit x) (cluit y)
+
+> test7 =
+>   do putStrLn "asdf"
+>      let a = cluit testsigA :: Cluster (StrucSig Bool ()) ()
+>      putStrLn (showCluRep a)
+>      let b = cluit (testsigA,testsigB) :: Cluster (StrucSig Bool ()) ()
+>      putStrLn (showCluRep b)
+>      return ()
+
+> bboxtest1 alab xlab f a =
+>   do let alabclu = labClu alab
+>      let a' = mkAlias InPort a
+>      let a'rep = cluit a'  :: Cluster (StrucSig Bool ()) ()
+>      let a'' = putLabel UnknownLocation alabclu a'rep
+>                   :: Cluster (StrucSig Bool ()) ()
+>      putStrLn ("a'' = " ++ showCluRep a'')
+>      let x = f a'
+>      let x' = mkAlias OutPort x
+>      let xlabclu = labClu xlab
+>      let x'rep = cluit x' :: Cluster (StrucSig Bool ()) ()
+>      let x'' = putLabel UnknownLocation xlabclu x'rep
+>      putStrLn ("x'' = " ++ showCluRep x'')
+>      let clus = [a'',x'']
+>      putStrLn "bboxtest1"
+>      return ()
+
+> test8 = bboxtest1 "abc" "def" inv testsigA
+> test9 = bboxtest1 ("ab","cd") ("ef","gh") ha (testsigA,testsigB)
+
+> ha (x,y) = (and2 x y, or2 x y)
+
+> -- test3 :: StrucSig Bool () -> StrucSig Bool ()
+> test3 x = bboxtest1 "abc" "def" inv x
+
+replaced the above, making CluFlat take three type parameters so it
+is polymorphic in the tag type
+
+------------------------------------------------------------
+
+> class Clusterable a b c where
+>   repClu :: (Maybe String) -> ClusterParent a c -> b
+>             -> Cluster a c
+>   unrepClu :: Cluster a c -> b
+
+> instance Clusterable Bool Bool c where
+>   repClu s cp x = Singleton s cp x
+>   unrepClu (Singleton _ _ x) = x
+
+> instance Clusterable (StrucSig a b) (StrucSig a b) u
+>  where
+>   repClu s cp x = Singleton s cp x
+>   unrepClu (Singleton _ _ x) = x
+
+> instance (Clusterable a b d, Clusterable a c d) =>
+>    Clusterable a (b,c) d
+>  where
+>   repClu s cp (x,y) =
+>     let r = Tuple2 s cp
+>               (repClu Nothing (ParentCluster r 0) x)
+>               (repClu Nothing (ParentCluster r 1) y)
+>     in r
+>   unrepClu (Tuple2 _ _ x y) = (unrepClu x, unrepClu y)
+
+> instance (Clusterable a b e, Clusterable a c e,
+>           Clusterable a d e) =>
+>  Clusterable a (b,c,d) e  where
+>   repClu s cp (x,y,z) =
+>     let r = Tuple3 s cp
+>               (repClu Nothing (ParentCluster r 0) x)
+>               (repClu Nothing (ParentCluster r 1) y)
+>               (repClu Nothing (ParentCluster r 2) z)
+>     in r
+>   unrepClu (Tuple3 _ _ x y z) =
+>     (unrepClu x, unrepClu y, unrepClu z)
+
+Some test cases to show how the Clusterable class works...
+
+> {-
+> u1 :: Cluster Bool ()
+> u1 = repClu (Just "bye") (TopCluster (error "nobox") 0)
+>        (False,True)
+> u2 = unrepClu u1 :: (Bool,Bool)
+> -}
+
+> {-
+> v1 :: Cluster Bool ()
+> v1 = repClu Nothing (TopCluster (error []) 0) (True,False,True)
+> v2 = unrepClu v1 :: (Bool,Bool,Bool)
+> -}
+
+
+
+> test2 =
+>   do putStrLn "Test mkAlias applied to pair"
+>      let x = (testsigA,testsigB)
+>      let lab = ("abc", "def")
+>      let labclu = labClu lab
+>      let y = mkAlias InPort x
+>      putStrLn (strucSigStruc (fst y))
+>      putStrLn (strucSigStruc (snd y))
+>      let clurep = repClu Nothing undefined y
+>             :: Cluster (StrucSig Bool ()) ()
+>      putStrLn (showclunames clurep)
+>      putStrLn (showCluRep clurep)
+>      return ()
+
+
+> {-
+> bb1Struc
+>   :: (Signal a,
+>       Clusterable (StrucSig a t) b t, LabClu c t,
+>       Clusterable (StrucSig a t) d t, LabClu e t)
+>   => String    -- box label
+>   -> c         -- input cluster labels
+>   -> e         -- output cluster labels
+>   -> t         -- box tag
+>   -> (b->d)    -- white box functionality
+>   -> b         -- input cluster
+>   -> d         -- output cluster
+
+> bb1Struc boxl inpl outl tag f x =
+>   let box =
+>         Box {boxSpecies   = boxl
+>             , boxTag      = tag
+>             , boxParent   = undefined
+>             , boxChildren = undefined -- bs
+>             , boxInPorts  = [xclu]
+>             , boxOutPorts = yclu
+>             , boxSignals  = undefined -- ps
+>             , boxWires    = []
+>             }
+> --      xclu :: Cluster (StrucSig a t) (Box a t)
+>       xclu = label
+>                InPort
+>                (labClu inpl)
+>                (repClu Nothing
+>                   undefined -- (TopCluster box 0)
+>                    x)
+>                (TopCluster box 0)
+>       x' = undefined -- foobar (unrepClu xclu) x
+>       y = undefined -- f x'
+>   --    yclu :: Cluster (StrucSig a t) (Box a t)
+>       yclu =  undefined -- label OutPort (labClu outl)
+> --               (repClu Nothing (TopCluster box 1) y)
+> --                (TopCluster box 1)
+>       y' = undefined -- unrepClu yclu
+>   in y'
+> -}
+
+
+> {-
+>  blackbox1_Struc
+>   :: (Signal a,
+>       LabClu b (Box a t),
+>       LabClu c (Box a t),
+>       Clusterable (StrucSig a t) d (Box a t),
+>       Clusterable (StrucSig a t) e (Box a t))
+>   => String  -- box label
+>   -> b       -- input cluster labels
+>   -> c       -- output cluster labels
+>   -> t       -- box tag
+>   -> (d->e)  -- white box functionality
+>   -> d       -- input cluster
+>   -> e       -- output cluster
+> -}
+
+> blackbox1_Struc boxlab alab xlab tag f a =
+>   let box = undefined
+>         Box {boxSpecies   = boxlab
+>             , boxTag      = tag
+>             , boxParent   = undefined
+>             , boxChildren = bs
+>             , boxPorts    = [a1,x1]
+>             , boxInPorts  = [a1,x1]
+>             , boxOutPorts = x1
+>             , boxSignals  = ps
+>             , boxWires    = []
+>             }
+>       a1 = label
+>              InPort
+>              (labClu alab)
+>              (repClu Nothing (TopCluster undefined 0) a)
+>              (TopCluster undefined 0)
+>       a2 = foobar (unrepClu a1) a
+>       x = f a2
+>       x1 = label
+>              OutPort
+>              (labClu xlab)
+>              (repClu Nothing (TopCluster undefined 0) x)
+>              (TopCluster undefined 1)
+>       x2 = foobar (unrepClu x1) x
+>       (bs,ps) = traceback [] (clusigs x) [] (clusigs a)
+>   in x2
+
+
+> -- circ :: StrucSig Bool () -> StrucSig Bool ()
+> -- circ = blackbox1_Struc "circ" "circInp" "circOut" () not
+
+
+> {- test1 :: IO ()
+> test1 =
+>   do let sigs = repClu Nothing (TopCluster (error []) 0)
+>                   (True,False,True)  :: Cluster Bool ()
+>      let labs = labClu ("aaa","bbb","ccc")
+>      let clu = label InPort labs sigs UnknownLocation
+>      let vals = unrepClu clu :: (Bool,Bool,Bool)
+>      putStrLn (showclunames clu)
+>      putStrLn (show vals)
+>      return ()
+> -}
+
+this was just to try things out in a simpler context...
+
+> class Flattable a b where
+>   flatit :: a -> [b]
+
+> instance Flattable (StrucSig a b) (StrucSig a b) where
+>   flatit x = [x]
+
+> instance (Flattable a t, Flattable b t) => Flattable (a,b) t where
+>   flatit (x,y) = flatit x ++ flatit y
+
+> test5 = flatit testsigA :: [StrucSig Bool ()]
+> test6 = flatit (testsigA,testsigB)  :: [StrucSig Bool ()]
+
+
+------------------------------------------------------------
+
+The label function uses a cluster of strings, represented using the
+explicit Cluster type, to attach labels to the leaf components of a
+cluster of signals, also represented using the Cluster type.
+
+> label
+>   :: Port
+>   -> Cluster String (Box a t)
+>   -> Cluster (StrucSig a t) (Box a t)
+>   -> ClusterParent (StrucSig a t) (Box a t)
+>   -> Cluster (StrucSig a t) (Box a t)
+
+> label port (Singleton _ _ lab) (Singleton _ _ x) cp =
+>   let x'  = Alias port (ParentCluster clu 0) x
+>       clu = Singleton (Just lab) cp x'
+>   in clu
+
+> label port (Tuple2 s _ a b) (Tuple2 _ _ x y) cp =
+>   let r = Tuple2 s cp
+>             (label port a x (ParentCluster r 0))
+>             (label port b y (ParentCluster r 1))
+>   in r
+
+> label port (Tuple3 s _ a b c) (Tuple3 _ _ x y z) cp =
+>   let r = Tuple3 s cp
+>             (label port a x (ParentCluster r 0))
+>             (label port b y (ParentCluster r 1))
+>             (label port c z (ParentCluster r 2))
+>   in r
+
+
+a = base signal type
+t = box tag type
+b = a-label type
+c = x-label type
+d = input type
+e = output type
+
+> {- experiment
+>   :: (LabClu b (Box a t),
+>       LabClu c (Box a t),
+>       Clusterable (StrucSig a t) d (Box a t),
+>       Clusterable (StrucSig a t) e (Box a t))
+>   => b
+>   -> c
+>   -> (d->e)
+>   -> d
+>   -> e -}
+
+> {- experiment  from ghci
+>   :: (Clusterable
+>         (StrucSig a1 t)
+>         b1
+>         (Box a1 t),
+>       LabClu a2 (Box a1 t),
+>       Clusterable
+>         (StrucSig a1 t)
+>         b
+>         (Box a1 t),
+>       LabClu a (Box a1 t))
+>   => a
+>   -> a2
+>   -> (b -> b1)
+>   -> b -> b1 -}
+
+
+> {- experiment   -- from ghci
+>  :: forall a a2 b b1 a1 t.
+>      (Clusterable (StrucSig a1 t) b1 (Box a1 t),
+>       LabClu a2 (Box a1 t),
+>       Clusterable (StrucSig a1 t) b (Box a1 t),
+>       LabClu a (Box a1 t))
+>  => a -> a2 -> (b -> b1) -> b -> b1 -}
+
+> {-
+> experiment alab xlab f a =
+>   let aclu = repClu Nothing undefined a
+>       a'   = foobar (unrepClu aclu) a    -- same as a again!
+>       a2   = label
+>                InPort
+>                (labClu alab)
+>                aclu
+>                undefined
+>       a3   = foobar (unrepClu a2) a      -- like a, but labelled
+>       x    = f a3                        -- result
+>       xclu = repClu Nothing undefined x
+>       x2   = label
+>                OutPort
+>                (labClu xlab)
+>                xclu
+>                undefined
+>       dummy = barbaz a2 x2   -- the clusters have same base types
+>       x3   = foobar (unrepClu x2) x      -- like x, but labelled
+>   in x3 -}
+
+> {- test1 =
+>   let a = Definer undefined True        :: StrucSig Bool ()
+>       x = experiment "abc" "def" inv a  :: StrucSig Bool ()
+>   in x -}
+
+this function takes a cluster (tuple of tuples) and returns a
+similarly shapted cluster with labels attached.
+
+> {- exper2
+>   :: (LabClu b (Box a t),
+>       Clusterable (StrucSig a t) c (Box a t))
+>   => b -> c -> c -}
+
+> {- exper2 lab x =
+>   let xclu = repClu Nothing undefined x
+>       x2   = label
+>                InPort
+>                (labClu lab)
+>                xclu
+>                undefined
+>       x3   = foobar (unrepClu x2) x
+>   in x3 -}
+
+> -- test2 = exper2 "abcd" (Definer undefined True)
+
+moved these things above out of SigStruct on May 8, 2001...
+
+------------------------------------------------------------
+
+May 9... yesterday got the following to typecheck; now am
+adding LabTree...
+
+> class ClusterableThree a b q where
+>   mkAlias3 :: Port -> ClusterParent (StrucSig a b) (Box a b) -> q
+>     -> (q, Cluster (StrucSig a b) (Box a b))
+
+> instance ClusterableThree a b (StrucSig a b) where
+>   mkAlias3 port cp x =
+>     let x' = Alias3 port c x
+>         c = Singleton Nothing cp x'
+>     in (x',c)
+
+> instance (ClusterableThree a b x, ClusterableThree a b y)
+>   => ClusterableThree a b (x,y) where
+>   mkAlias3 port cp (x,y) =
+>     let (x',cx) = mkAlias3 port (ParentCluster p 0) x
+>         (y',cy) = mkAlias3 port (ParentCluster p 1) y
+>         p  = Tuple2 Nothing cp cx cy
+>     in ((x',y'), p)
+
+------------------------------------------------------------ May 20,
+2001... removing these experiments, which worked partially, since the
+boxcluStruc1new function is now successful (although it unfortunately
+requires a signal witness argument, it would be nice to get rid of
+that!)
+
+
+> boxcluStruc1
+>   :: Signal a
+>   => String
+>   -> (Port -> ClusterParent (StrucSig a b) (Box a b)
+>       -> c -> (c, ClusterTree (StrucSig a b) (Box a b)))
+>   -> (Port -> ClusterParent (StrucSig a b) (Box a b)
+>       -> d -> (d, ClusterTree (StrucSig a b) (Box a b)))
+>   -> b
+>   -> (c->d)
+>   -> c
+>   -> d
+
+> boxcluStruc1 boxlab mka mkx layout f a =
+>   let box =
+>         Box { boxSpecies  = boxlab
+>             , boxLayout   = layout
+>             , boxParent   = TopBox
+>             , boxChildren = bs
+>             , boxInPorts  = [atree]
+>             , boxOutPorts = xtree
+>             , boxSignals  = ps
+>             , boxWires    = []
+>             }
+>       (a',atree) = mka InPort (BoxInCluster box 0) a
+>       dummy1 = foobar a a'
+>       x = f a'
+>       (x',xtree) = mkx OutPort (BoxOutCluster box) x
+>       dummy2 = foobar x x'
+>       (bs,ps) = traceback [] (outSources xtree) [] []
+>   in x'
+
+above is the new approach fom May 20 ....
+
+> circ22
+>  :: Signal a
+>   => (StrucSig a (), StrucSig a ()) -> (StrucSig a (), StrucSig a ())
+
+> circ22 =
+>   let inp = tuple2 "inputs" (bit "a") (bit "b")
+>       inp2 = buildCluster ("aaa","bbb")
+>       dummy1 = foobar inp inp2
+>       out = tuple2 "outputs" (bit "x") (bit "y")
+>       out2 = buildCluster ("xxx","yyy")
+>       dummy2 = foobar out out2
+>       f (a,b) = (and2 a b, or2 a b)
+>   in boxcluStruc1 "circ22" inp2 out2 () f
+
+
+> circ22d
+>  :: Signal a
+>   => (StrucSig a (), StrucSig a ()) -> (StrucSig a (), StrucSig a ())
+> circ22d inputs =
+>   let inp = tuple2 "inputs" (bit "a") (bit "b")
+>       inp2 = buildCluster ("aaa","bbb")
+>       dummy1 = foobar inp inp2
+>       out = tuple2 "outputs" (bit "x") (bit "y")
+>       out2 = buildCluster ("xxx","yyy")
+>       dummy2 = foobar out out2
+>       f (a,b) = (and2 a b, or2 a b)
+>   in boxcluStruc1 "circ22" inp2 out2 () f inputs
+
+> foobar :: a -> a -> ()
+> foobar x y = ()
+
+
+> {- circ22magic
+>  :: (
+>      Cluster a b ([Char],[Char]) (StrucSig a b, StrucSig a b)
+>     )
+>   => (StrucSig a b, StrucSig a b) -> (StrucSig a b, StrucSig a b)
+
+> circ22magic =
+>   let inp = buildCluster ("a","b")
+>       out = buildCluster ("x","y")
+>       f (a,b) = (and2 a b, or2 a b)
+>   in boxcluStruc1 "circ22magic" inp out () f -}
+
+May 19, 2001, try to simplify the form of a circuit specification...
+
+mkclu :: 
+
+
+> {- boxcluStruc1new
+>   :: Signal a
+>   => String
+>   -> (Port -> ClusterParent (StrucSig a b) (Box a b)
+>       -> c -> (c, ClusterTree (StrucSig a b) (Box a b)))
+>   -> (Port -> ClusterParent (StrucSig a b) (Box a b)
+>       -> d -> (d, ClusterTree (StrucSig a b) (Box a b)))
+>   -> b
+>   -> (c->d)
+>   -> c
+>   -> d -}
+
+> {- boxcluStruc1new
+>   :: (Cluster a b c e, Cluster a b d f)
+>   => String  -- box label
+>   -> c       -- input cluster label
+>   -> d       -- output cluster label
+>   -> b       -- box layout type
+>   -> (e->f)  -- circuit behavior
+>   -> e       -- input cluster
+>   -> f       -- output cluster
+
+> boxcluStruc1new boxlab alab xlab layout f a =
+>   let box =
+>         Box { boxSpecies  = boxlab
+>             , boxLayout   = layout
+>             , boxParent   = TopBox
+>             , boxChildren = bs
+>             , boxInPorts  = [atree]
+>             , boxOutPorts = xtree
+>             , boxSignals  = ps
+>             , boxWires    = []
+>             }
+>       dummy1 = foobar a a'
+>       dummy2 = foobar x x'
+>       dummy3 = foobar atree xtree
+>       (a',atree) = buildCluster alab InPort (BoxInCluster box 0) a
+>       x = f a'
+>       (x',xtree) = buildCluster xlab OutPort (BoxOutCluster box) x
+>       (bs,ps) = traceback [] (outSources xtree) [] []
+>   in x' -}
+
+
+> {- circ22new
+>  :: Signal a
+>   => (StrucSig a (), StrucSig a ()) -> (StrucSig a (), StrucSig a ())
+
+> circ22new =
+>   let inp = tuple2 "inputs" (bit "a") (bit "b")
+>       inp2 = buildCluster ("aaa","bbb")
+>       dummy1 = foobar inp inp2
+>       out = tuple2 "outputs" (bit "x") (bit "y")
+>       out2 = buildCluster ("xxx","yyy")
+>       dummy2 = foobar out out2
+>       f (a,b) = (and2 a b, or2 a b)
+>   in boxcluStruc1new "circ22" ("aaa","bbb") ("xxx","yyy") () f -}
+
+
+> circ22c
+>  :: Signal a
+>   => (StrucSig a (), StrucSig a ()) -> (StrucSig a (), StrucSig a ())
+
+> circ22c ab =
+>   let inp = tuple2 "inputs" (bit "a") (bit "b")
+>       inp2 = buildCluster ("aaa","bbb")
+>       dummy1 = foobar inp inp2
+>       out = tuple2 "outputs" (bit "x") (bit "y")
+>       out2 = buildCluster ("xxx","yyy")
+>       dummy2 = foobar out out2
+>       f (a,b) = (and2 a b, or2 a b)
+>   in boxcluStruc1 "circ22" inp2 out2 () f ab
+
+
+Another idea... (May 19th) maybe the problem is that currently I cannot
+relate the underlying signal and layout types (a and b) when the two
+clusters are built independently.  Possible solution: build them together!
+Make a new Cluster class that builds two clusters simultaneoulsly!  When
+there are several input clusters, that is another problem :-)
+
+
+a - signal type
+b - box layout type
+c - input label type
+d - output label type
+e - input cluster type
+f - output cluster type
+
+class ClusterNew a b where
+  buildCluster
+    :: c
+    -> d
+    -> ClusterParent (StrucSig a b) (Box a b)
+    -> 
+
+
+
+> exper :: Cluster a b c d
+>       => c -> Port -> ClusterParent (StrucSig a b) (Box a b)
+>       -> d -> (d, ClusterTree (StrucSig a b) (Box a b))
+> exper = buildCluster
+
+> {-
+> circ22e
+>  :: (Signal a,
+>      Signal (StrucSig a b),
+>      Cluster a b [Char] (StrucSig a b),
+>      Cluster a b ([Char],[Char]) (StrucSig a b, StrucSig a b))
+>  => (StrucSig a b, StrucSig a b) -> (StrucSig a b, StrucSig a b)
+
+> circ22e =
+>   let inp = exper ("a","b")
+>       out = exper ("x","y")
+>       f (a,b) = (and2 a b, or2 a b)
+>   in boxcluStruc1 "circ22magic" inp out () f
+> -}
+

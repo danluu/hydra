@@ -1,0 +1,2072 @@
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module BitComb where
+
+This module defines basic combinational logic circuits at the bit
+level.
+
+> import Signal
+> import BitWire
+
+
+
+
+Multiplexor
+~~~~~~~~~~~
+
+> mux1 :: Signal a => a -> a -> a -> a
+> mux1 c x y = or2 (and2 (inv c) x) (and2 c y)
+
+> mux2 :: Signal a => (a,a) -> a -> a -> a -> a -> a
+> mux2 (c,d) p q w r =
+>   mux1 c (mux1 d p q) (mux1 d w r)
+
+
+Demultiplexor
+~~~~~~~~~~~~~
+
+> demux1 :: Signal a => a -> a -> (a,a)
+> demux1 c x = (and2 (inv c) x, and2 c x)
+
+
+Bit addition
+~~~~~~~~~~~~
+
+> halfAdd :: Signal a => a -> a -> (a,a)
+> halfAdd x y = (and2 x y, xor2 x y)
+
+> bsum3, bcarry3 :: Signal a => (a,a) -> a -> a
+> bsum3 (x,y) c = xor3 x y c
+> bcarry3 (x,y) c = or3 (and2 x y) (and2 x c) (and2 y c)
+
+> fullAdd :: Signal a => (a,a) -> a -> (a,a)
+> fullAdd (x,y) c = (bcarry3 (x,y) c, bsum3 (x,y) c)
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module BitCombTest where
+
+This module contains examples and test cases for the definitions in
+BitComb.
+
+> import Hydra
+> import BitComb
+
+> main =
+>   do putStr "BitCombTest"
+>      truthTable31 mux1
+>      return ()
+
+> foomain :: IO ()
+> foomain =
+>   do putStrLn "BitCombTest"
+>      putStrLn "--- mux1..."
+>      putStrLn (show (mux1 False True False))
+>      putStrLn "BitCombTest finished."
+
+
+> {-
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"
+> -}
+
+
+
+
+---------------------------------------------------------------------------
+The Hydra Computer Hardware Description Language
+See the README and COPYING files, and www.dcs.gla.ac.uk/|jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module BitSeq where
+
+This module defines basic sequential circuits at the bit level.
+
+> import Signal
+> import BitComb
+
+
+Registers
+~~~~~~~~~
+
+> reg1 :: Clocked a => a -> a -> a
+> reg1 ld x =
+>   let s = dff (mux1 ld s x)
+>   in s
+
+
+Shift registers
+~~~~~~~~~~~~~~~
+
+> srb :: Clocked a => (a,a) -> a -> a -> a -> a
+> srb op l r x =
+>   let y = dff (mux2 op y x l r)
+>   in y
+
+
+
+Register files
+~~~~~~~~~~~~~~
+
+> regfile1 :: Clocked a => Int
+>   -> a -> [a] -> [a] -> [a] -> a -> (a,a)
+
+> regfile1 0 ld d sa sb x =
+>   let r = reg1 ld x
+>   in (r,r)
+
+> regfile1 (k+1) ld (d:ds) (sa:sas) (sb:sbs) x =
+>   let (ld0,ld1) = demux1 d ld
+>       (a0,b0) = regfile1 k ld0 ds sas sbs x
+>       (a1,b1) = regfile1 k ld1 ds sas sbs x
+>       a = mux1 sa a0 a1
+>       b = mux1 sb b0 b1
+>   in (a,b)
+
+
+
+
+Memory
+~~~~~~
+
+> mem1
+>   :: (Signal a, Clocked a)
+>   => Int
+>   -> a -> [a] -> [a] -> a -> a
+
+> mem1 0 ld d sa x =
+>   reg1 ld x
+
+> mem1 (k+1) ld (d:ds) (sa:sas) x =
+>   let (ld0,ld1) = demux1 d ld
+>       a0 = mem1 k ld0 ds sas x
+>       a1 = mem1 k ld1 ds sas x
+>       a = mux1 sa a0 a1
+>   in a
+      
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module BitComb4Test where
+
+This module contains examples and test cases for the circuits defined
+in BitComb4.
+
+> import HydraCLI
+
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"
+
+
+
+
+---------------------------------------------------------------------------
+The Hydra Computer Hardware Description Language
+See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module BitWire where
+
+This module defines wiring patterns---pure connections that don't
+contain any active components---at the bit level.
+
+> import Signal
+
+
+Fanout patterns
+~~~~~~~~~~~~~~~
+
+> fanout2 :: a -> (a,a)
+> fanout2 x = (x,x)
+
+> fanout3 :: a -> (a,a,a)
+> fanout3 x = (x,x,x)
+
+> fanout4 :: a -> (a,a,a,a)
+> fanout4 x = (x,x,x,x)
+---------------------------------------------------------------------------
+      Hydra: A Functional Computer Hardware Description Language
+	 --- StdCircuit.lhs: The Standard Circuit Library ---
+	  See the README and COPYING files and the web page:
+		    www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+This module provides the full Hydra library of standard circuits.
+
+> module CircuitLib
+>  (module BitWire,  module BitComb,  module BitSeq,
+>   module WordWire, module WordComb, module WordSeq,
+>   module Word4Comb, module Word4Seq
+>  )
+> where
+
+> import BitWire
+> import BitComb
+> import BitSeq
+> import Word4Comb
+> import Word4Seq
+> import WordWire
+> import WordComb
+> import WordSeq
+
+The actual circuits are defined in several more specialised modules,
+which are listed above.  The purpose of StdCircuit is to collect the
+standard circuits together in one module.  This enables the user to
+get the full Hydra library by importing just two modules: Hydra and
+StdCircuit.
+___________________________________________________________________
+	 The Hydra Computer Hardware Description Language:
+	    Basic Combinational Circuits: Structural Class
+
+			  John O'Donnell
+		       University of Glasgow
+
+   See the readme file and http://www.dcs.gla.ac.uk/~jtod/Hydra/
+      Copyright (c) 2000 John O'Donnell  All Rights Reserved
+___________________________________________________________________
+
+This module defines the basic combinational logic circuits with
+structural signals.
+
+> module CombStr where
+> import Signal
+> import Combinator
+> import CombSig
+
+> {-  Older version
+> mux1 :: Signal a => a -> a -> a -> a
+> mux1 = box31 "mux1" "a""b""c" "x" f
+>   where f c x y = or2 (and2 (inv c) x) (and2 c y)
+> -}
+
+> {-
+> mux1 :: (Signal a, Structured a) => a -> a -> a -> a
+> mux1 =
+>   box31 "mux1" "ctrl" "a" "b" "x" undefined f
+>   where f c x y = or2 (and2 (inv c) x) (and2 c y)
+> -}
+
+> {-
+> demux1 :: (Signal a, Structured a) => a -> a -> (a,a)
+> demux1 =
+>   box22 "demux1" "ctrl" "a" "b" ("x","y") undefined f
+>   where f c x = (and2 (inv c) x, and2 c x)
+> -}
+
+> halfAdd :: (Signal a, Structured a) => a -> a -> (a,a)
+> halfAdd =
+>   box22 "halfAdd" "x" "y" "sum2" ("c","s") undefined f
+>   where f x y = (and2 x y, xor2 x y)
+
+> {- fullAdd (x,y) a =
+>   let c = or3 (and2 a x) (and2 a y) (and2 x y)
+>       s = xor2 a (xor2 x y)
+>       out = mkOut "fullAdd"
+>               [S "cin" a, T2 "xy" (S "x" x) (S "y" y)]
+>               (T2 "sum2" (S "cout" c) (S "s" s))
+>       Tuple2 _ _ (Singleton _ _ c') (Singleton _ _ s') = out
+>   in (c',s') -}
+
+> {-
+> rippleAddS :: Signal a => a -> [(a,a)] -> (a,[a])
+> rippleAddS a xys =
+>   let (c,ss) = mscanr fullAdd a xys
+>       out = mkOut "ripple add"
+>               [S "carry input" a,
+>                W "data input" (zipWith f xys [0..])]
+>               (T2 "ripsum"
+>                 (S "cout" a)
+>                 (W "sum" (zipWith g ss [0..])))
+>       f (x,y) i = T2 ("[" ++ show i ++ "]") (S "x" x) (S "y" y)
+>       g s i = S ("s[" ++ show i ++ "]") s
+>       Tuple2 _ _ (Singleton _ _ c') (Word _ _ n ss') = out
+>       ss'' = map h ss'
+>       h (Singleton _ _ s) = s
+>   in (c',ss'')
+---------------------------------------------------------------------------
+      Hydra: A Functional Computer Hardware Description Language
+		 --- FastAdd.lhs: log time adder ---
+	  See the README and COPYING files and the web page:
+		    www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+In the adder paper, the carry propagation, defined using the ascanr
+design pattern, is separated out from the sum calculation which uses
+map2:
+
+rippleAdd c zs =
+ let (c',cs) = ascanr bcarry c zs
+     ss = map2 bsum zs cs
+  in (c',ss)
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module Word4Comb where
+
+This module contains a collection of combinational circuits that
+operate on 4-bit words.  These can be used as building blocks for
+larger circuits.  The definitions given below are straightforward,
+defining the connections for each signal explicitly.  For a more
+general approach that allows arbitrary word sizes, see the WordComb
+module.
+
+> import Signal
+> import BitWire
+> import BitComb
+> -- import BitSeq
+> -- import WordWire
+
+> rippleAdd4 :: Signal a => a -> [(a,a)] -> (a,[a])
+> rippleAdd4 cin [(x0,y0),(x1,y1),(x2,y2),(x3,y3)] =
+>   let (c0,s0) = fullAdd (x0,y0) c1
+>       (c1,s1) = fullAdd (x1,y1) c2
+>       (c2,s2) = fullAdd (x2,y2) c3
+>       (c3,s3) = fullAdd (x3,y3) cin
+>   in (c0, [s0,s1,s2,s3])
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module Word4CombTest where
+
+This module contains examples and test cases for the circuits defined
+in Word4Comb.
+
+> import HydraCLI
+
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"
+
+
+
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module Word4Seq where
+
+This module contains a collection of sequential circuits that operate
+on 4-bit words.  These can be used as building blocks for larger
+circuits.  The definitions given below are straightforward, defining
+the connections for each signal explicitly.  For a more general
+approach that allows arbitrary word sizes, see the WordSeq module.
+
+> import Signal
+> import BitWire
+> import BitComb
+> import BitSeq
+> -- import WordWire
+> -- import WordComb
+> -- import DesignPattern
+
+
+> reg4 :: Clocked a => a -> [a] -> [a]
+> reg4 ld [x0,x1,x2,x3] =
+>   [reg1 ld x0, reg1 ld x1, reg1 ld x2, reg1 ld x3]
+
+
+> sr4 :: Clocked a => (a,a) -> a -> a -> [a] -> [a]
+> sr4 op l r [x0,x1,x2,x3] =
+>   let a = srb op l b x0
+>       b = srb op a c x1
+>       c = srb op b d x2
+>       d = srb op c r x3
+>   in [a,b,c,d]
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module Word4SeqTest where
+
+This module contains examples and test cases for the circuits defined
+in Word4Seq.
+
+___________________________________________________________________
+	 The Hydra Computer Hardware Description Language:
+	     Examples and Testing for Module BasicSeq
+
+			  John O'Donnell
+		       University of Glasgow
+
+   See the readme file and http://www.dcs.gla.ac.uk/~jtod/Hydra/
+      Copyright (c) 2000  John O'Donnell  All Rights Reserved
+___________________________________________________________________
+
+
+> module TestBasicSeq where
+
+> import BasicSeq
+> import Signal
+> import SigBool
+> import SigStruct
+> import SigStream
+> import Combinator
+> import BasicComb 
+> import Format
+> import HydraCLI
+
+
+Running the Simulations
+~~~~~~~~~~~~~~~~~~~~~~~
+
+sim_ripadd
+sim_regfile
+sim_regfile_dec
+sim_sr4
+sim_gen_sr_4
+sim_gen_sr_8
+sim_rtm
+sim_mult
+
+> {- where is ffcirc defined?
+> main :: IO ()
+> main =
+>  let x = ffcirc (input "a" a) (input "b" b)
+>      a = True
+>      b = False
+>      out = Singleton (Just "ffoutput") TopCluster x
+>  in hydraCLI out
+> -}
+
+> test0 =
+>   let x :: [Stream Bool]
+>       x = [forever one, forever zero, forever one, forever zero]
+>       l = forever zero
+>       r = forever one
+>       op = (zero,  one) :: (Stream Bool, Stream Bool)
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       q = mux1 one one zero
+>       p = mux2 op one zero zero zero
+>       spec :: [Format Bool]
+>       spec = [FmtString "Input: ",
+>               FmtBit fmtBit [] op0,
+>               FmtBit fmtBit [] op1,
+>               FmtBit fmtBit "l" l,
+>               FmtBit fmtBit "r" r,
+>               FmtString " ",
+>               FmtWord fmtWord "x" 4 4 x,
+>               FmtString "    Output: ",
+>               FmtBit fmtBit [] q,
+>               FmtString " ",
+>               FmtWord fmtWord "y" 4 4 y]
+>   in run' 5 0 spec
+
+
+> test1 =
+>   let x :: [Stream Bool]
+>       x = [forever one, forever zero, forever one, forever zero]
+>       l = forever zero
+>       r = forever one
+>       op = (zero,  one) :: (Stream Bool, Stream Bool)
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       q = mux1 one one zero :: Stream Bool
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ", bits y]
+>   in run' 5 0 spec
+
+
+
+
+> test5a =  -- Just one register
+>   let k = 0  -- there are 2^0 = 1 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 0,  25],  -- R :=  25
+>         [0, 0, 0, 1,   0],  --
+>         [1, 7, 4, 7, 255],  -- R := 255
+>         [1, 1, 4, 7,  31],  -- R1 := 31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --
+>         [1, 2, 1, 7, 100],  -- R := 100
+>         [0, 0, 0, 0,   0]]  --
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run' (length input) 0 spec
+
+
+> test5b =  -- Just two registers
+>   let k = 1  -- there are 2^1 = 2 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb   x
+> --      ~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 1,  25],  -- R0 :=  25
+>         [0, 0, 0, 1,   0],  --
+>         [1, 1, 0, 1, 255],  -- R1 := 255
+>         [1, 0, 0, 1,  31],  -- R0 :=  31
+>         [0, 1, 0, 1,  50],  --
+>         [1, 1, 0, 1, 100],  -- R1 := 100
+>         [0, 0, 0, 1,   0]]  --
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run' (length input) 0 spec
+
+
+Simulating the Ripple Carry Adder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> sim_ripadd =
+>   let n = 8
+>       input =
+>        [[0,  3,  8],
+>         [0,  5, -9],
+>         [0, -2, -3],
+>         [0,  4, 50]]
+>       ci = getbit   input 0 :: Stream Bool 
+>       x  = getbin n input 1
+>       y  = getbin n input 2
+>       (co,s) = rippleAdd ci (zipn n x y)
+>       simoutput :: [Format Bool]
+>       simoutput =
+>         [bit ci,
+>          string " x= ", bindec 4 x, tcdec 4 x,
+>          string " y= ", bindec 4 y, tcdec 4 y,
+>          string " Output: ", bit co,
+>          string " sum= ", bindec 4 s, tcdec 4 s]
+>   in run input simoutput
+
+> {- old
+> sim_ripadd =
+>   let n = 8
+>       input =
+>        [[0, 3,  8],
+>         [0, 4, 50]]
+>       ci = getbit   input 0 :: Stream Bool 
+>       x  = getbin n input 1
+>       y  = getbin n input 2
+>       (co,s) = rippleAdd ci (zipn n x y)
+>       spec :: [Format Bool]
+>       spec =
+>         [bit ci, bindec 4 x, bindec 4 y,
+>          string " Output: ", bit co, bindec 4 s]
+>   in run input spec
+> -}
+
+Simulating the Register File
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> sim_regfile =
+>   let k = 3  -- there are 2^3 = 8 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 4, 0, 0,  25],  -- R4 :=  25    R0 =   0, R0 =   0
+>         [1, 7, 4, 7, 255],  -- R7 := 255    R4 =  25, R7 =   0
+>         [1, 1, 4, 7,  31],  -- R1 :=  31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --              R0 =   0, R1 =  31
+>         [1, 2, 1, 7, 100],  -- R2 := 100,   R1 =  31, R7 = 255
+>         [0, 0, 0, 2,   0]]  --              R0 =   0  R2 = 100
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run input spec
+
+The following is the same as sim_regfile, but it prints the output
+using decimal representations.  The only difference appears in
+spec, where bindec is used instead of bits for printing the binary
+numbers in decimal notation.
+
+> sim_regfile_dec =
+>   let k = 3  -- there are 2^3 = 8 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 4, 0, 0,  25],  -- R4 :=  25    R0 =   0, R0 =   0
+>         [1, 7, 4, 7, 255],  -- R7 := 255    R4 =  25, R7 =   0
+>         [1, 1, 4, 7,  31],  -- R1 :=  31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --              R0 =   0, R1 =  31
+>         [1, 2, 1, 7, 100],  -- R2 := 100,   R1 =  31, R7 = 255
+>         [0, 0, 0, 2,   0]]  --              R0 =   0  R2 = 100
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bindec 1 d, string " ",
+>          bindec 1 sa, string " ", bindec 1 sb,
+>          string " ", bindec 3 x,
+>          string "   Output: ",
+>          bindec 3 a, string " ", bindec 3 b]
+>   in run input spec
+
+The Bidirectional Shift Register
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Meaning of op:
+     0 -- no state change
+     1 -- load input word x
+     2 -- shift right
+     3 -- shift left
+
+> sim_sr4 =
+>   let input =
+> --      op  l  r  x        op    produce  state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 9],  -- load     1001    0000
+>         [0, 0, 0, 3],  -- nop      1001    1001
+>         [2, 1, 0, 4],  -- right 1  1100    1001
+>         [2, 0, 0, 2],  -- right 0  0110    1100
+>         [3, 0, 1, 7],  -- left  1  1101    0110
+>         [1, 0, 0, 5],  -- load     0101    1101
+>         [0, 0, 0, 0]]  -- nop      0101    0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 4 input 3
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ", bits y]
+>   in run input spec
+
+
+We can define the shift register circuit more generally with the
+mscanr combinator; note that in this simulation, we use the general
+circuit "sr" rather than the restricted 4-bit sr4.  The test data
+is identical to that used above, and you can check that the circuit
+defined in this more general way has the same behaviour on this
+test data.
+
+> sim_gen_sr_4 =
+>   let input =
+> --      op  l  r  x        op    produce  state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 9],  -- load     1001    0000
+>         [0, 0, 0, 3],  -- nop      1001    1001
+>         [2, 1, 0, 4],  -- right 1  1100    1001
+>         [2, 0, 0, 2],  -- right 0  0110    1100
+>         [3, 0, 1, 7],  -- left  1  1101    0110
+>         [1, 0, 0, 5],  -- load     0101    1101
+>         [0, 0, 0, 0]]  -- nop      0101    0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 4 input 3
+>       (op0,op1) = op
+>       (p,q,y) = sr op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ",
+>               bit p, bit q, string " ", bits y]
+>   in run input spec
+
+Here is a similar example, but where the word size is increased to
+8.  Notice that all we had to do to change the wordsize was to
+change the number of bits in x; the general mscanr combinator
+automatically accommodates itself to the new word size!
+
+> sim_gen_sr_8 =
+>   let input =
+> --      op  l  r  x        op        state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 75],  -- load     0000 0000
+>         [0, 0, 0,  3],  -- nop      0100 1011
+>         [2, 1, 0,  4],  -- right 1  0100 1011
+>         [2, 0, 0,  2],  -- right 0  1010 0101
+>         [3, 0, 1,  7],  -- left  1  0101 0010
+>         [1, 0, 0,  5],  -- load     1010 0101
+>         [0, 0, 0,  0]]  -- nop      0000 0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 8 input 3  -- 8 bit words!
+>       (op0,op1) = op
+>       (p,q,y) = sr op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ",
+>               bit p, bit q, string " ", bits y]
+>   in run input spec
+
+
+Simulating the Register Transfer Machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> sim_rtm =
+>   let n = 8  -- can also try 30
+>       k = 3  -- can try 5
+>       input =
+> --      ld add d sa sb   x
+> --      ~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 3, 0, 0, 125], -- R3 :=   x   = 125. R0=  0 R0=  0
+>         [1, 0, 6, 3, 0,  10], -- R6 :=   x   =  10. R3=125 R0=  0
+>         [1, 1, 2, 3, 6,   0], -- R2 := R3+R6 = 135. R3=125 R6= 10
+>         [1, 0, 1, 1, 2,  75], -- R1 :=   x   =  75. R1=  0 R2=135
+>         [1, 1, 1, 1, 2,   0], -- R1 := R1+R2 = 210. R1= 75 R2=135
+>         [0, 0, 0, 1, 2,   0]] -- nop                R1=210 R2=135
+>       ld  = getbit   input 0
+>       add = getbit   input 1
+>       d   = getbin k input 2
+>       sa  = getbin k input 3
+>       sb  = getbin k input 4
+>       x   = getbin n input 5
+>       (a,b,y,c,s) = rtm n k ld add d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, bit add, bindec 2 d, bindec 2 sa, bindec 2 sb,
+>          bindec 4 x,
+>          string "  Output: ",
+>          bindec 4 a, bindec 4 b, bindec 4 y, bindec 4 s]
+>   in run input spec
+
+Simulating the Sequential Multiplier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+> sim_mult =
+>   let k = 8
+>       input =
+> --     start  x    y
+> --     ~~~~~~~~~~~~~~
+>        [[1,  50,  75],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [1, 100, 100],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [1, 100, 100],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [1,   2,   3],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0]]
+>       start = getbit   input 0
+>       x     = getbin k input 1
+>       y     = getbin k input 2
+>       (rdy,prod,rx,ry,s) = mult k start x y
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit start, bindec 4 x, bindec 4 y,
+>          string "  Output: ",
+>          bit rdy, bindec 6 prod, bindec 4 rx, bindec 6 ry,
+>          bindec 6 s]
+>     in run input spec
+
+
+old stuff from CombTest...
+
+> import HydraCLI
+
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"
+
+
+
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module WordComb where
+
+This module defines the a collection of combinational logic circuits
+that operate on words.  These circuits are suitable as building blocks
+for larger scale designs.  They can be used at any word size, and
+design patterns are used to make the specifications simple, regular
+and general.
+
+> import Signal
+> import BitWire
+> import BitComb
+> import WordWire
+> import DesignPattern
+
+
+And/Or over a word
+~~~~~~~~~~~~~~~~~~
+
+Determine whether there exists a 1 in a word, or whether all the
+bits are 0.  A tree fold can do this in log time, but for
+simplicity this is just a linear time fold.
+
+> any1, all0 :: Signal a => [a] -> a
+> any1 = foldl or2 zero
+> all0 = foldl and2 one
+
+
+Multiplexor
+~~~~~~~~~~~
+
+> wmux1 :: Signal a => a -> [a] -> [a] -> [a]
+> wmux1 c x y = map2 (mux1 c) x y
+
+map2' :: (a->b->c) -> [a] -> [b] -> [c]
+map2' f xs ys =
+
+
+> {- old version uses size parameter
+> wmux1 :: Signal a => Int -> a -> [a] -> [a] -> [a]
+> wmux1 n c x y =
+>   [mux1 c (x!!i) (y!!i) | i <- [0..n-1]]
+> -}
+
+
+Demultiplexor
+~~~~~~~~~~~~~
+
+
+Ripple carry addition
+~~~~~~~~~~~~~~~~~~~~~
+
+> rippleAdd :: Signal a => a -> [(a,a)] -> (a,[a])
+> rippleAdd = mscanr fullAdd
+
+
+
+Two's complement addition and subtraction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> addSub :: Signal a => a -> [(a,a)] -> (a,[a])
+> addSub sub xy = rippleAdd sub (map f xy)
+>   where f (x,y) = (x, xor2 sub y)
+
+
+Binary comparitor
+~~~~~~~~~~~~~~~~~
+
+> cmp1 :: Signal a => (a,a,a) -> (a,a) -> (a,a,a)
+> cmp1 (lt,eq,gt) (x,y) =
+>   (or2 lt (and3 eq (inv x) y),
+>    and2 eq (inv (xor2 x y)),
+>    or2 gt (and3 eq x (inv y))
+>   )
+
+> rippleCmp :: Signal a => [(a,a)] -> (a,a,a)
+> rippleCmp = foldl cmp1 (zero,one,zero)
+
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module WordCombTest where
+
+> import WordComb
+> import Format
+
+
+Testing addition circuits
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Test an adder circuit named addcirc entering an expression like the
+following:
+
+  sim_adder rippleAdd4  4 add_input1
+  sim_adder rippleAdd   4 add_input1
+  sim_adder rippleAdd  16 add_input1
+
+The simulation driver for adders
+
+> sim_adder add_circuit n input =
+>   let (co,s) = add_circuit ci (bitslice2 x y)
+>       ci = getbit   input 0
+>       x  = getbin n input 1
+>       y  = getbin n input 2
+>       simoutput :: [Format Bool]
+>       simoutput =
+>         [string " ci=", bit ci,
+>          string " x= ", bindec 3 x,
+>          string " y= ", bindec 3 y,
+>          string "   Output: ", bit co, bindec 4 s]
+>   in do putStrLn "\nSimulating ripple carry adder"
+>         run input simoutput
+
+This module contains examples and test cases for the circuits defined
+in WordComb.
+
+
+old versions...
+
+> {- from here to the end...
+> import HydraCLI
+
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"
+
+> -}
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module WordSeq where
+
+This module defines the a collection of sequential circuits that
+operate on words.  These circuits are suitable as building blocks for
+larger scale designs.  They can be used at any word size, and design
+patterns are used to make the specifications simple, regular and
+general.
+
+> import Signal
+> import BitWire
+> import BitComb
+> import BitSeq
+> import WordWire
+> import WordComb
+> import DesignPattern
+
+
+Register
+~~~~~~~~
+
+
+> reg :: Clocked a => Int -> a -> [a] -> [a]
+> reg n ld x = mapn (reg1 ld) n x
+
+
+
+Shift register
+~~~~~~~~~~~~~~
+
+> sr :: (Signal a, Clocked a)
+>   => (a,a) -> a -> a -> [a] -> (a,a,[a])
+> sr op l r xs = mscan (srb' op) l r xs
+>   where srb' a b c d = fanout3 (srb a b c d)
+
+
+Register file
+~~~~~~~~~~~~~
+
+> unbitslice2 :: [(a,b)] -> ([a],[b])
+> unbitslice2 [] = ([],[])
+> unbitslice2 ((x,y):zs) =
+>   let (xs,ys) = unbitslice2 zs
+>   in (x:xs, y:ys)
+
+> regfile :: Clocked a => Int -> Int
+>   -> a -> [a] -> [a] -> [a] -> [a] -> ([a],[a])
+
+> regfile n k ld d sa sb x =
+>    unbitslice2 [regfile1 k ld d sa sb (x!!i)  | i <- [0..n-1]]
+
+Memory
+
+> membit sto x =
+>   let s = dff (mux1 sto s x)
+>   in s
+
+mem1 :: Clocked a => 
+mem1 0 sto ps x = membit fet sto x
+mem1 (k+1) sto (p:ps) =
+  let m0 = mem1 k (and2 (inv p) sto) ps
+      m1 = mem1 k (and2 p sto) ps
+  in mux1
+
+
+Register Transfer Machine
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> rtm :: Clocked a => Int -> Int
+>   -> a -> a -> [a] -> [a] -> [a] -> [a] -> ([a],[a],[a],a,[a])
+
+> rtm n k ld add d sa sb x =
+>   let (a,b) = regfile n k ld d sa sb y
+>       y = wmux1 add x s
+>       (c,s) = rippleAdd zero (zipn n a b)
+>   in (a,b,y,c,s)
+
+
+
+Sequential multiplier
+~~~~~~~~~~~~~~~~~~~~~
+
+The multiplier circuit uses the sequential shift-and-add algorithm
+to multiply two k-bit binary numbers, producing a 2k-bit product.
+The specification is general, taking a size parameter k::Int.  The
+start control signal tells the multiplier to begin computing the
+product x*y, and any other multiplication in progress (if any) is
+aborted.  In order to make the simulation output more interesting,
+the multiplier outputs its internal register and sum values as well
+as the ready signal and the product.
+
+> mult :: Clocked a => Int
+>   -> a -> [a] -> [a] -> (a,[a],[a],[a],[a])
+
+> mult k start x y =
+>   let rx = reg k one
+>              (wmux1 start (shr rx) x)
+>       ry = reg (2*k) one
+>              (wmux1 start
+>                 (shl ry)
+>                 (fanout k zero ++ y))
+>       prod = reg (2*k) one
+>              (wmux1 start
+>                 (wmux1 (lsb rx) prod s)
+>                 (fanout (2*k) zero))
+>       (c,s) = rippleAdd zero (bitslice2 ry prod)
+>       ready = or2 (inv (any1 rx)) (inv (any1 ry))
+>   in (ready,prod,rx,ry,s)
+
+
+---------------------------------------------------------------------------
+	   The Hydra Computer Hardware Description Language
+ See the README and COPYING files, and www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module WordSeqTest where
+
+This module contains examples and test cases for the circuits defined
+in WordSeq.
+
+___________________________________________________________________
+	 The Hydra Computer Hardware Description Language:
+	     Examples and Testing for Module BasicSeq
+
+			  John O'Donnell
+		       University of Glasgow
+
+   See the readme file and http://www.dcs.gla.ac.uk/~jtod/Hydra/
+      Copyright (c) 2000  John O'Donnell  All Rights Reserved
+___________________________________________________________________
+
+
+> module TestBasicSeq where
+
+> import BasicSeq
+> import Signal
+> import SigBool
+> import SigStruct
+> import SigStream
+> import Combinator
+> import BasicComb 
+> import Format
+> import HydraCLI
+
+
+Running the Simulations
+~~~~~~~~~~~~~~~~~~~~~~~
+
+sim_ripadd
+sim_regfile
+sim_regfile_dec
+sim_sr4
+sim_gen_sr_4
+sim_gen_sr_8
+sim_rtm
+sim_mult
+
+> {- where is ffcirc defined?
+> main :: IO ()
+> main =
+>  let x = ffcirc (input "a" a) (input "b" b)
+>      a = True
+>      b = False
+>      out = Singleton (Just "ffoutput") TopCluster x
+>  in hydraCLI out
+> -}
+
+> test0 =
+>   let x :: [Stream Bool]
+>       x = [forever one, forever zero, forever one, forever zero]
+>       l = forever zero
+>       r = forever one
+>       op = (zero,  one) :: (Stream Bool, Stream Bool)
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       q = mux1 one one zero
+>       p = mux2 op one zero zero zero
+>       spec :: [Format Bool]
+>       spec = [FmtString "Input: ",
+>               FmtBit fmtBit [] op0,
+>               FmtBit fmtBit [] op1,
+>               FmtBit fmtBit "l" l,
+>               FmtBit fmtBit "r" r,
+>               FmtString " ",
+>               FmtWord fmtWord "x" 4 4 x,
+>               FmtString "    Output: ",
+>               FmtBit fmtBit [] q,
+>               FmtString " ",
+>               FmtWord fmtWord "y" 4 4 y]
+>   in run' 5 0 spec
+
+
+> test1 =
+>   let x :: [Stream Bool]
+>       x = [forever one, forever zero, forever one, forever zero]
+>       l = forever zero
+>       r = forever one
+>       op = (zero,  one) :: (Stream Bool, Stream Bool)
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       q = mux1 one one zero :: Stream Bool
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ", bits y]
+>   in run' 5 0 spec
+
+
+
+
+> test5a =  -- Just one register
+>   let k = 0  -- there are 2^0 = 1 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 0,  25],  -- R :=  25
+>         [0, 0, 0, 1,   0],  --
+>         [1, 7, 4, 7, 255],  -- R := 255
+>         [1, 1, 4, 7,  31],  -- R1 := 31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --
+>         [1, 2, 1, 7, 100],  -- R := 100
+>         [0, 0, 0, 0,   0]]  --
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run' (length input) 0 spec
+
+
+> test5b =  -- Just two registers
+>   let k = 1  -- there are 2^1 = 2 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb   x
+> --      ~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 1,  25],  -- R0 :=  25
+>         [0, 0, 0, 1,   0],  --
+>         [1, 1, 0, 1, 255],  -- R1 := 255
+>         [1, 0, 0, 1,  31],  -- R0 :=  31
+>         [0, 1, 0, 1,  50],  --
+>         [1, 1, 0, 1, 100],  -- R1 := 100
+>         [0, 0, 0, 1,   0]]  --
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run' (length input) 0 spec
+
+
+Simulating the Ripple Carry Adder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> sim_ripadd =
+>   let n = 8
+>       input =
+>        [[0,  3,  8],
+>         [0,  5, -9],
+>         [0, -2, -3],
+>         [0,  4, 50]]
+>       ci = getbit   input 0 :: Stream Bool 
+>       x  = getbin n input 1
+>       y  = getbin n input 2
+>       (co,s) = rippleAdd ci (zipn n x y)
+>       simoutput :: [Format Bool]
+>       simoutput =
+>         [bit ci,
+>          string " x= ", bindec 4 x, tcdec 4 x,
+>          string " y= ", bindec 4 y, tcdec 4 y,
+>          string " Output: ", bit co,
+>          string " sum= ", bindec 4 s, tcdec 4 s]
+>   in run input simoutput
+
+> {- old
+> sim_ripadd =
+>   let n = 8
+>       input =
+>        [[0, 3,  8],
+>         [0, 4, 50]]
+>       ci = getbit   input 0 :: Stream Bool 
+>       x  = getbin n input 1
+>       y  = getbin n input 2
+>       (co,s) = rippleAdd ci (zipn n x y)
+>       spec :: [Format Bool]
+>       spec =
+>         [bit ci, bindec 4 x, bindec 4 y,
+>          string " Output: ", bit co, bindec 4 s]
+>   in run input spec
+> -}
+
+Simulating the Register File
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> sim_regfile =
+>   let k = 3  -- there are 2^3 = 8 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 4, 0, 0,  25],  -- R4 :=  25    R0 =   0, R0 =   0
+>         [1, 7, 4, 7, 255],  -- R7 := 255    R4 =  25, R7 =   0
+>         [1, 1, 4, 7,  31],  -- R1 :=  31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --              R0 =   0, R1 =  31
+>         [1, 2, 1, 7, 100],  -- R2 := 100,   R1 =  31, R7 = 255
+>         [0, 0, 0, 2,   0]]  --              R0 =   0  R2 = 100
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bits d, string " ",
+>          bits sa, string " ", bits sb, string " ", bits x,
+>          string "   Output: ", bits a, string " ", bits b]
+>   in run input spec
+
+The following is the same as sim_regfile, but it prints the output
+using decimal representations.  The only difference appears in
+spec, where bindec is used instead of bits for printing the binary
+numbers in decimal notation.
+
+> sim_regfile_dec =
+>   let k = 3  -- there are 2^3 = 8 registers
+>       n = 8  -- each register contains 8 bits
+>       input =
+> --      ld  d sa sb  x
+> --      ~~~~~~~~~~~~~~~
+>        [[1, 4, 0, 0,  25],  -- R4 :=  25    R0 =   0, R0 =   0
+>         [1, 7, 4, 7, 255],  -- R7 := 255    R4 =  25, R7 =   0
+>         [1, 1, 4, 7,  31],  -- R1 :=  31    R4 =  25, R7 = 255
+>         [0, 1, 0, 1,  50],  --              R0 =   0, R1 =  31
+>         [1, 2, 1, 7, 100],  -- R2 := 100,   R1 =  31, R7 = 255
+>         [0, 0, 0, 2,   0]]  --              R0 =   0  R2 = 100
+>       ld = getbit   input 0
+>       d  = getbin k input 1
+>       sa = getbin k input 2
+>       sb = getbin k input 3
+>       x  = getbin n input 4
+>       (a,b) = regfile n k ld d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, string " ", bindec 1 d, string " ",
+>          bindec 1 sa, string " ", bindec 1 sb,
+>          string " ", bindec 3 x,
+>          string "   Output: ",
+>          bindec 3 a, string " ", bindec 3 b]
+>   in run input spec
+
+The Bidirectional Shift Register
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Meaning of op:
+     0 -- no state change
+     1 -- load input word x
+     2 -- shift right
+     3 -- shift left
+
+> sim_sr4 =
+>   let input =
+> --      op  l  r  x        op    produce  state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 9],  -- load     1001    0000
+>         [0, 0, 0, 3],  -- nop      1001    1001
+>         [2, 1, 0, 4],  -- right 1  1100    1001
+>         [2, 0, 0, 2],  -- right 0  0110    1100
+>         [3, 0, 1, 7],  -- left  1  1101    0110
+>         [1, 0, 0, 5],  -- load     0101    1101
+>         [0, 0, 0, 0]]  -- nop      0101    0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 4 input 3
+>       (op0,op1) = op
+>       y = sr4 op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ", bits y]
+>   in run input spec
+
+
+We can define the shift register circuit more generally with the
+mscanr combinator; note that in this simulation, we use the general
+circuit "sr" rather than the restricted 4-bit sr4.  The test data
+is identical to that used above, and you can check that the circuit
+defined in this more general way has the same behaviour on this
+test data.
+
+> sim_gen_sr_4 =
+>   let input =
+> --      op  l  r  x        op    produce  state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 9],  -- load     1001    0000
+>         [0, 0, 0, 3],  -- nop      1001    1001
+>         [2, 1, 0, 4],  -- right 1  1100    1001
+>         [2, 0, 0, 2],  -- right 0  0110    1100
+>         [3, 0, 1, 7],  -- left  1  1101    0110
+>         [1, 0, 0, 5],  -- load     0101    1101
+>         [0, 0, 0, 0]]  -- nop      0101    0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 4 input 3
+>       (op0,op1) = op
+>       (p,q,y) = sr op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ",
+>               bit p, bit q, string " ", bits y]
+>   in run input spec
+
+Here is a similar example, but where the word size is increased to
+8.  Notice that all we had to do to change the wordsize was to
+change the number of bits in x; the general mscanr combinator
+automatically accommodates itself to the new word size!
+
+> sim_gen_sr_8 =
+>   let input =
+> --      op  l  r  x        op        state
+> --      ~~~~~~~~~~~       ~~~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 0, 75],  -- load     0000 0000
+>         [0, 0, 0,  3],  -- nop      0100 1011
+>         [2, 1, 0,  4],  -- right 1  0100 1011
+>         [2, 0, 0,  2],  -- right 0  1010 0101
+>         [3, 0, 1,  7],  -- left  1  0101 0010
+>         [1, 0, 0,  5],  -- load     1010 0101
+>         [0, 0, 0,  0]]  -- nop      0000 0101
+>       op = getbit2  input 0
+>       l =  getbit   input 1
+>       r =  getbit   input 2
+>       x =  getbin 8 input 3  -- 8 bit words!
+>       (op0,op1) = op
+>       (p,q,y) = sr op l r x
+>       spec :: [Format Bool]
+>       spec = [string "Input: ",
+>               bit op0, bit op1, string " ",
+>               bit l, string " ", bit r, string " ", bits x,
+>               string "    Output: ",
+>               bit p, bit q, string " ", bits y]
+>   in run input spec
+
+
+Simulating the Register Transfer Machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> sim_rtm =
+>   let n = 8  -- can also try 30
+>       k = 3  -- can try 5
+>       input =
+> --      ld add d sa sb   x
+> --      ~~~~~~~~~~~~~~~~~~~
+>        [[1, 0, 3, 0, 0, 125], -- R3 :=   x   = 125. R0=  0 R0=  0
+>         [1, 0, 6, 3, 0,  10], -- R6 :=   x   =  10. R3=125 R0=  0
+>         [1, 1, 2, 3, 6,   0], -- R2 := R3+R6 = 135. R3=125 R6= 10
+>         [1, 0, 1, 1, 2,  75], -- R1 :=   x   =  75. R1=  0 R2=135
+>         [1, 1, 1, 1, 2,   0], -- R1 := R1+R2 = 210. R1= 75 R2=135
+>         [0, 0, 0, 1, 2,   0]] -- nop                R1=210 R2=135
+>       ld  = getbit   input 0
+>       add = getbit   input 1
+>       d   = getbin k input 2
+>       sa  = getbin k input 3
+>       sb  = getbin k input 4
+>       x   = getbin n input 5
+>       (a,b,y,c,s) = rtm n k ld add d sa sb x
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit ld, bit add, bindec 2 d, bindec 2 sa, bindec 2 sb,
+>          bindec 4 x,
+>          string "  Output: ",
+>          bindec 4 a, bindec 4 b, bindec 4 y, bindec 4 s]
+>   in run input spec
+
+Simulating the Sequential Multiplier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+> sim_mult =
+>   let k = 8
+>       input =
+> --     start  x    y
+> --     ~~~~~~~~~~~~~~
+>        [[1,  50,  75],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [1, 100, 100],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [1, 100, 100],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [1,   2,   3],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0],
+>         [0,   0,   0]]
+>       start = getbit   input 0
+>       x     = getbin k input 1
+>       y     = getbin k input 2
+>       (rdy,prod,rx,ry,s) = mult k start x y
+>       spec :: [Format Bool]
+>       spec =
+>         [string "Input: ",
+>          bit start, bindec 4 x, bindec 4 y,
+>          string "  Output: ",
+>          bit rdy, bindec 6 prod, bindec 4 rx, bindec 6 ry,
+>          bindec 6 s]
+>     in run input spec
+
+
+old stuff from CombTest...
+
+> import HydraCLI
+
+> main :: IO ()
+> main =
+>  do putStr "Test cases for module BasComb\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_1\n"
+>     let x = mux1_1 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x ++ "\n")
+>     let muxbox = (sigOwner (sigLoc x)) :: Box ()
+>     putStr (show_Box muxbox ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox
+>     putStr "test finished\n"
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_2\n"
+>     let x2 = mux1_2 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>     describe_Box 0 muxbox2
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Structure!!!\n"
+>     let x2 = mux1_4 (input "alpha" ()) (input "beta" ()) (input "gamma" ())
+>     putStr ("output is " ++ show_Signal x2 ++ "\n")
+>     let muxbox2 = (sigOwner (sigLoc x2)) :: Box ()
+>     putStr (show_Box muxbox2 ++ "\n")
+>     let [foo,bar,baz] = boxInputs muxbox2
+>     putStr (show_Signal foo ++ "\n")
+>     putStr (show_Signal bar ++ "\n")
+>     putStr (show_Signal baz ++ "\n")
+>     let [bla] = boxOutputs muxbox2
+>     putStr (show_Signal bla ++ "\n")
+>     let cs = boxChildren muxbox2
+>     putStr (show (length cs) ++ " children\n")
+>     putStr (show_Box (cs!!0) ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test mux1_4 with Bool!!!\n"
+>     let x2 = mux1_4 True False True
+>     foo31 mux1_4 False False False
+>     foo31 mux1_4 False False True
+>     foo31 mux1_4 False True  False
+>     foo31 mux1_4 False True  True
+>     foo31 mux1_4 True  False False
+>     foo31 mux1_4 True  False True
+>     foo31 mux1_4 True  True  False
+>     foo31 mux1_4 True  True  True
+>     putStr ("output is " ++ show x2 ++ "\n")
+>
+>     putStr "-------------------------------------------------\n"
+>     putStr "Test halfAdd\n"
+>     let (c,s) = halfAdd (input "xx" ()) (input "yy" ())
+>     putStr "BasComb test cases finished\n"
+>     return ()
+
+> foo31 :: (Bool->Bool->Bool->Bool) -> Bool -> Bool -> Bool -> IO ()
+> foo31 f a b c =
+>   do putStr (showB a ++ showB b ++ showB c
+>              ++ " ==> " ++ showB (f a b c) ++ "\n")
+>      return ()
+
+> showB :: Bool -> String
+> showB False = "0"
+> showB True  = "1"
+
+
+
+
+---------------------------------------------------------------------------
+      Hydra: A Functional Computer Hardware Description Language
+	    --- WordWire.lhs: word-level wire networks ---
+	  See the README and COPYING files and the web page:
+		    www.dcs.gla.ac.uk/~jtod/Hydra/
+---------------------------------------------------------------------------
+
+> module WordWire where
+> import Signal
+> import BitWire
+> import DesignPattern
+
+
+> fanout :: Signal a => Int -> a -> [a]
+> fanout k x = [x | i <- [0..k-1]]
+
+Bit Slice organization
+~~~~~~~~~~~~~~~~~~~~~~
+
+> bitslice2 :: [a] -> [a] -> [(a,a)]
+> bitslice2 = zip
+
+
+Shifting
+~~~~~~~~
+
+Shift a word to the right (shr) or to the left (shl).  In both
+cases, this is just a wiring pattern.  A 0 is brought in on one
+side, and the bit on the other side is just thrown away.
+
+> shr x = zero : [x!!i | i <- [0..k-2]]
+>   where k = length x
+> shl x = [x!!i | i <- [1..k-1]] ++ [zero]
+>   where k = length x
+
+
+
+> zipn :: Int -> [a] -> [b] -> [(a,b)]
+> zipn n x y =
+>   [(x!!i,y!!i) | i <- [0..n-1]]
+
+> unzipn n xs =
+>   ([fst (xs!!i) | i <- [0..n-1]],
+>    [snd (xs!!i) | i <- [0..n-1]])
+
+>{- zipn :: Int -> [a] -> [b] -> [(a,b)]
+> zipn n xs ys =
+>   [(xs!!i, ys!!i) | i <- [0..n-1]] -}
